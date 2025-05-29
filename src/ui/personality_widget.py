@@ -15,11 +15,12 @@ class PersonalityCard(QFrame):
     
     clicked = pyqtSignal(str)  # 发送人格ID
     
-    def __init__(self, personality_id: str, personality_data: dict):
+    def __init__(self, personality_id: str, personality_data: dict, is_dark_theme: bool = False):
         super().__init__()
         self.personality_id = personality_id
         self.personality_data = personality_data
         self.is_selected = False
+        self.is_dark_theme = is_dark_theme
         
         self.init_ui()
         self.set_style()
@@ -31,81 +32,113 @@ class PersonalityCard(QFrame):
         layout.setSpacing(8)
         
         # 人格名称
-        name_label = QLabel(self.personality_data.get('name', self.personality_id))
+        self.name_label = QLabel(self.personality_data.get('name', self.personality_id))
         # 使用系统兼容的字体
         try:
             from utils.helpers import get_system_font
             name_font = get_system_font(12, bold=True)
             if name_font:
-                name_label.setFont(name_font)
+                self.name_label.setFont(name_font)
         except ImportError:
             # 如果导入失败，使用默认字体
             name_font = QFont()
             name_font.setPointSize(12)
             name_font.setBold(True)
-            name_label.setFont(name_font)
-        layout.addWidget(name_label)
+            self.name_label.setFont(name_font)
+        layout.addWidget(self.name_label)
         
         # 人格描述
-        desc_label = QLabel(self.personality_data.get('description', ''))
-        desc_label.setWordWrap(True)
-        desc_label.setStyleSheet("color: #666; font-size: 11px;")
-        layout.addWidget(desc_label)
+        self.desc_label = QLabel(self.personality_data.get('description', ''))
+        self.desc_label.setWordWrap(True)
+        layout.addWidget(self.desc_label)
         
         # 人格特征
         traits = self.personality_data.get('personality_traits', [])
         if traits:
             traits_text = "特征: " + ", ".join(traits)
-            traits_label = QLabel(traits_text)
-            traits_label.setWordWrap(True)
-            traits_label.setStyleSheet("color: #888; font-size: 10px; font-style: italic;")
-            layout.addWidget(traits_label)
+            self.traits_label = QLabel(traits_text)
+            self.traits_label.setWordWrap(True)
+            layout.addWidget(self.traits_label)
+        else:
+            self.traits_label = None
         
         # 设置固定高度
         self.setFixedHeight(120)
     
     def set_style(self):
         """设置样式"""
-        style = """
-        QFrame {
-            background-color: white;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            margin: 2px;
-        }
-        QFrame:hover {
-            border-color: #007acc;
-            background-color: #f8f9ff;
-        }
-        """
-        self.setStyleSheet(style)
+        self.set_selected(self.is_selected)
+        self.update_label_colors()
+    
+    def update_label_colors(self):
+        """更新标签颜色"""
+        if self.is_dark_theme:
+            desc_color = "#bbbbbb"
+            traits_color = "#999999"
+        else:
+            desc_color = "#666666"
+            traits_color = "#888888"
+        
+        self.desc_label.setStyleSheet(f"color: {desc_color}; font-size: 11px;")
+        if self.traits_label:
+            self.traits_label.setStyleSheet(f"color: {traits_color}; font-size: 10px; font-style: italic;")
     
     def set_selected(self, selected: bool):
         """设置选中状态"""
         self.is_selected = selected
-        if selected:
-            style = """
-            QFrame {
-                background-color: #e6f3ff;
-                border: 2px solid #007acc;
-                border-radius: 10px;
-                margin: 2px;
-            }
-            """
+        
+        if self.is_dark_theme:
+            if selected:
+                style = """
+                QFrame {
+                    background-color: #003d66;
+                    border: 2px solid #007acc;
+                    border-radius: 10px;
+                    margin: 2px;
+                }
+                """
+            else:
+                style = """
+                QFrame {
+                    background-color: #363636;
+                    border: 2px solid #555555;
+                    border-radius: 10px;
+                    margin: 2px;
+                }
+                QFrame:hover {
+                    border-color: #007acc;
+                    background-color: #404040;
+                }
+                """
         else:
-            style = """
-            QFrame {
-                background-color: white;
-                border: 2px solid #e0e0e0;
-                border-radius: 10px;
-                margin: 2px;
-            }
-            QFrame:hover {
-                border-color: #007acc;
-                background-color: #f8f9ff;
-            }
-            """
+            if selected:
+                style = """
+                QFrame {
+                    background-color: #e6f3ff;
+                    border: 2px solid #007acc;
+                    border-radius: 10px;
+                    margin: 2px;
+                }
+                """
+            else:
+                style = """
+                QFrame {
+                    background-color: white;
+                    border: 2px solid #e0e0e0;
+                    border-radius: 10px;
+                    margin: 2px;
+                }
+                QFrame:hover {
+                    border-color: #007acc;
+                    background-color: #f8f9ff;
+                }
+                """
         self.setStyleSheet(style)
+    
+    def set_theme(self, is_dark_theme: bool):
+        """设置主题"""
+        self.is_dark_theme = is_dark_theme
+        self.set_style()
     
     def mousePressEvent(self, event):
         """鼠标点击事件"""
@@ -124,6 +157,7 @@ class PersonalityWidget(QWidget):
         self.chat_engine = chat_engine
         self.personality_cards = {}
         self.current_personality_id = None
+        self.is_dark_theme = False
         
         self.init_ui()
         self.load_personalities()
@@ -135,32 +169,31 @@ class PersonalityWidget(QWidget):
         layout.setSpacing(10)
         
         # 标题
-        title_label = QLabel("选择AI人格")
+        self.title_label = QLabel("选择AI人格")
         try:
             from utils.helpers import get_system_font
             title_font = get_system_font(14, bold=True)
             if title_font:
-                title_label.setFont(title_font)
+                self.title_label.setFont(title_font)
         except ImportError:
             title_font = QFont()
             title_font.setPointSize(14)
             title_font.setBold(True)
-            title_label.setFont(title_font)
-        title_label.setAlignment(Qt.AlignCenter)
-        layout.addWidget(title_label)
+            self.title_label.setFont(title_font)
+        self.title_label.setAlignment(Qt.AlignCenter)
+        layout.addWidget(self.title_label)
         
         # 说明文字
-        desc_label = QLabel("不同的人格会展现不同的对话风格和记忆关注点")
-        desc_label.setWordWrap(True)
-        desc_label.setAlignment(Qt.AlignCenter)
-        desc_label.setStyleSheet("color: #666; font-size: 11px; margin-bottom: 10px;")
-        layout.addWidget(desc_label)
+        self.desc_label = QLabel("不同的人格会展现不同的对话风格和记忆关注点")
+        self.desc_label.setWordWrap(True)
+        self.desc_label.setAlignment(Qt.AlignCenter)
+        layout.addWidget(self.desc_label)
         
         # 滚动区域
-        scroll_area = QScrollArea()
-        scroll_area.setWidgetResizable(True)
-        scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.scroll_area = QScrollArea()
+        self.scroll_area.setWidgetResizable(True)
+        self.scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         
         # 人格卡片容器
         self.cards_container = QWidget()
@@ -169,12 +202,15 @@ class PersonalityWidget(QWidget):
         self.cards_layout.setSpacing(10)
         self.cards_layout.addStretch()  # 添加弹性空间
         
-        scroll_area.setWidget(self.cards_container)
-        layout.addWidget(scroll_area)
+        self.scroll_area.setWidget(self.cards_container)
+        layout.addWidget(self.scroll_area)
         
         # 当前人格信息显示
         self.create_current_info_panel()
         layout.addWidget(self.current_info_frame)
+        
+        # 设置样式
+        self.set_style()
     
     def create_current_info_panel(self):
         """创建当前人格信息面板"""
@@ -185,33 +221,96 @@ class PersonalityWidget(QWidget):
         layout.setContentsMargins(10, 10, 10, 10)
         
         # 标题
-        info_title = QLabel("当前人格")
+        self.info_title = QLabel("当前人格")
         try:
             from utils.helpers import get_system_font
             info_font = get_system_font(11, bold=True)
             if info_font:
-                info_title.setFont(info_font)
+                self.info_title.setFont(info_font)
         except ImportError:
             info_font = QFont()
             info_font.setPointSize(11)
             info_font.setBold(True)
-            info_title.setFont(info_font)
-        layout.addWidget(info_title)
+            self.info_title.setFont(info_font)
+        layout.addWidget(self.info_title)
         
         # 当前人格信息
         self.current_info_label = QLabel("未选择人格")
         self.current_info_label.setWordWrap(True)
-        self.current_info_label.setStyleSheet("color: #666; font-size: 10px;")
         layout.addWidget(self.current_info_label)
+    
+    def set_style(self):
+        """设置样式"""
+        if self.is_dark_theme:
+            # 深色主题
+            desc_style = "color: #bbbbbb; font-size: 11px; margin-bottom: 10px;"
+            scroll_style = """
+            QScrollArea {
+                background-color: #2b2b2b;
+                border: 1px solid #404040;
+            }
+            /* 滚动条样式 */
+            QScrollBar:vertical {
+                background-color: #2b2b2b;
+                width: 12px;
+                border: none;
+            }
+            QScrollBar::handle:vertical {
+                background-color: #555555;
+                border-radius: 6px;
+                min-height: 20px;
+            }
+            QScrollBar::handle:vertical:hover {
+                background-color: #666666;
+            }
+            QScrollBar::add-line:vertical,
+            QScrollBar::sub-line:vertical {
+                height: 0px;
+            }
+            QScrollBar::add-page:vertical,
+            QScrollBar::sub-page:vertical {
+                background-color: transparent;
+            }
+            """
+            frame_style = """
+            QFrame {
+                background-color: #363636;
+                border: 1px solid #555555;
+                border-radius: 5px;
+            }
+            """
+            info_style = "color: #cccccc; font-size: 11px;"
+        else:
+            # 浅色主题
+            desc_style = "color: #666; font-size: 11px; margin-bottom: 10px;"
+            scroll_style = """
+            QScrollArea {
+                background-color: white;
+                border: 1px solid #e0e0e0;
+            }
+            """
+            frame_style = """
+            QFrame {
+                background-color: #f8f9fa;
+                border: 1px solid #e0e0e0;
+                border-radius: 5px;
+            }
+            """
+            info_style = "color: #666; font-size: 11px;"
         
-        # 设置样式
-        self.current_info_frame.setStyleSheet("""
-        QFrame {
-            background-color: #f8f9fa;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-        }
-        """)
+        self.desc_label.setStyleSheet(desc_style)
+        self.scroll_area.setStyleSheet(scroll_style)
+        self.current_info_frame.setStyleSheet(frame_style)
+        self.current_info_label.setStyleSheet(info_style)
+    
+    def set_theme(self, is_dark_theme: bool):
+        """设置主题"""
+        self.is_dark_theme = is_dark_theme
+        self.set_style()
+        
+        # 更新所有人格卡片的主题
+        for card in self.personality_cards.values():
+            card.set_theme(is_dark_theme)
     
     def load_personalities(self):
         """加载人格列表"""
@@ -226,7 +325,7 @@ class PersonalityWidget(QWidget):
         
         # 创建人格卡片
         for personality_id, personality_data in personalities.items():
-            card = PersonalityCard(personality_id, personality_data)
+            card = PersonalityCard(personality_id, personality_data, self.is_dark_theme)
             card.clicked.connect(self.on_personality_selected)
             
             self.personality_cards[personality_id] = card

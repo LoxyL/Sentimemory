@@ -14,11 +14,12 @@ from datetime import datetime
 class ChatBubble(QFrame):
     """聊天气泡"""
     
-    def __init__(self, message: str, sender: str = "user", timestamp: str = None):
+    def __init__(self, message: str, sender: str = "user", timestamp: str = None, is_dark_theme: bool = False):
         super().__init__()
         self.message = message
         self.sender = sender
         self.timestamp = timestamp or datetime.now().strftime("%H:%M")
+        self.is_dark_theme = is_dark_theme
         
         self.init_ui()
     
@@ -61,38 +62,57 @@ class ChatBubble(QFrame):
             }
             """
         elif self.sender == "ai":
-            # AI消息 - 灰色，左对齐
-            style = """
-            QFrame {
-                background-color: #f0f0f0;
-                color: black;
+            # AI消息 - 根据主题调整颜色
+            if self.is_dark_theme:
+                bg_color = "#404040"
+                text_color = "#ffffff"
+            else:
+                bg_color = "#f0f0f0"
+                text_color = "#333333"
+            
+            style = f"""
+            QFrame {{
+                background-color: {bg_color};
+                color: {text_color};
                 border-radius: 15px;
                 margin-left: 10px;
                 margin-right: 50px;
-            }
-            QLabel {
+            }}
+            QLabel {{
                 background-color: transparent;
-                color: black;
-            }
+                color: {text_color};
+            }}
             """
         else:
-            # 系统消息 - 居中
-            style = """
-            QFrame {
-                background-color: #ffffcc;
-                color: #666;
+            # 系统消息 - 根据主题调整颜色
+            if self.is_dark_theme:
+                bg_color = "#555555"
+                text_color = "#cccccc"
+            else:
+                bg_color = "#ffffcc"
+                text_color = "#666666"
+            
+            style = f"""
+            QFrame {{
+                background-color: {bg_color};
+                color: {text_color};
                 border-radius: 10px;
                 margin-left: 100px;
                 margin-right: 100px;
-            }
-            QLabel {
+            }}
+            QLabel {{
                 background-color: transparent;
-                color: #666;
+                color: {text_color};
                 text-align: center;
-            }
+            }}
             """
         
         self.setStyleSheet(style)
+    
+    def set_theme(self, is_dark_theme: bool):
+        """设置主题"""
+        self.is_dark_theme = is_dark_theme
+        self.set_bubble_style()
 
 
 class ChatWidget(QWidget):
@@ -103,6 +123,7 @@ class ChatWidget(QWidget):
     def __init__(self, chat_engine):
         super().__init__()
         self.chat_engine = chat_engine
+        self.is_dark_theme = False
         self.init_ui()
         self.setup_connections()
     
@@ -165,6 +186,13 @@ class ChatWidget(QWidget):
     
     def set_style(self):
         """设置样式"""
+        if self.is_dark_theme:
+            self.set_dark_style()
+        else:
+            self.set_light_style()
+    
+    def set_light_style(self):
+        """设置浅色样式"""
         style = """
         QScrollArea {
             border: none;
@@ -180,6 +208,7 @@ class ChatWidget(QWidget):
             padding: 8px 15px;
             font-size: 12px;
             background-color: white;
+            color: #333333;
         }
         QLineEdit:focus {
             border-color: #007acc;
@@ -199,9 +228,85 @@ class ChatWidget(QWidget):
         }
         QPushButton:disabled {
             background-color: #cccccc;
+            color: #888888;
         }
         """
         self.setStyleSheet(style)
+    
+    def set_dark_style(self):
+        """设置深色样式"""
+        style = """
+        QScrollArea {
+            border: none;
+            background-color: #2b2b2b;
+        }
+        QFrame {
+            background-color: #1e1e1e;
+            border-top: 1px solid #404040;
+        }
+        QLineEdit {
+            border: 2px solid #555555;
+            border-radius: 20px;
+            padding: 8px 15px;
+            font-size: 12px;
+            background-color: #363636;
+            color: #ffffff;
+        }
+        QLineEdit:focus {
+            border-color: #007acc;
+        }
+        QPushButton {
+            background-color: #007acc;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        QPushButton:hover {
+            background-color: #005a9e;
+        }
+        QPushButton:pressed {
+            background-color: #004080;
+        }
+        QPushButton:disabled {
+            background-color: #555555;
+            color: #888888;
+        }
+        /* 滚动条样式 */
+        QScrollBar:vertical {
+            background-color: #2b2b2b;
+            width: 12px;
+            border: none;
+        }
+        QScrollBar::handle:vertical {
+            background-color: #555555;
+            border-radius: 6px;
+            min-height: 20px;
+        }
+        QScrollBar::handle:vertical:hover {
+            background-color: #666666;
+        }
+        QScrollBar::add-line:vertical,
+        QScrollBar::sub-line:vertical {
+            height: 0px;
+        }
+        QScrollBar::add-page:vertical,
+        QScrollBar::sub-page:vertical {
+            background-color: transparent;
+        }
+        """
+        self.setStyleSheet(style)
+    
+    def set_theme(self, is_dark_theme: bool):
+        """设置主题"""
+        self.is_dark_theme = is_dark_theme
+        self.set_style()
+        
+        # 更新所有聊天气泡的主题
+        for i in range(self.chat_layout.count()):
+            item = self.chat_layout.itemAt(i)
+            if item and item.widget() and isinstance(item.widget(), ChatBubble):
+                item.widget().set_theme(is_dark_theme)
     
     def setup_connections(self):
         """设置信号连接"""
@@ -219,11 +324,19 @@ class ChatWidget(QWidget):
         self.add_message(welcome_text, "ai")
     
     def add_message(self, message: str, sender: str = "user"):
-        """添加消息到聊天区域"""
-        bubble = ChatBubble(message, sender)
+        """添加消息"""
+        # 移除弹性空间
+        if self.chat_layout.count() > 0:
+            last_item = self.chat_layout.itemAt(self.chat_layout.count() - 1)
+            if last_item.spacerItem():
+                self.chat_layout.removeItem(last_item)
         
-        # 在弹性空间之前插入消息气泡
-        self.chat_layout.insertWidget(self.chat_layout.count() - 1, bubble)
+        # 创建消息气泡
+        bubble = ChatBubble(message, sender, is_dark_theme=self.is_dark_theme)
+        self.chat_layout.addWidget(bubble)
+        
+        # 重新添加弹性空间
+        self.chat_layout.addStretch()
         
         # 滚动到底部
         QTimer.singleShot(100, self.scroll_to_bottom)

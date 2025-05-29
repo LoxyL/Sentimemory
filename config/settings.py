@@ -30,7 +30,7 @@ class AppSettings:
                 "response_timeout": 30
             },
             "ui": {
-                "theme": "light",
+                "theme": "dark",
                 "font_size": 12,
                 "chat_bubble_style": "modern"
             },

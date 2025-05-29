@@ -21,6 +21,7 @@ from ai.chat_engine import ChatEngine
 from .chat_widget import ChatWidget
 from .personality_widget import PersonalityWidget
 from .memory_widget import MemoryWidget
+from config.settings import AppSettings
 
 
 class MainWindow(QMainWindow):
@@ -29,6 +30,8 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.chat_engine = ChatEngine()
+        self.settings = AppSettings()
+        self.is_dark_theme = self.settings.get('ui.theme', 'light') == 'dark'
         self.init_ui()
         self.setup_connections()
     
@@ -56,6 +59,8 @@ class MainWindow(QMainWindow):
         
         # 创建右侧聊天区域
         self.chat_widget = ChatWidget(self.chat_engine)
+        # 立即设置主题
+        self.chat_widget.set_theme(self.is_dark_theme)
         splitter.addWidget(self.chat_widget)
         
         # 设置分割器比例
@@ -83,10 +88,14 @@ class MainWindow(QMainWindow):
         
         # 人格选择标签页
         self.personality_widget = PersonalityWidget(self.chat_engine)
+        # 立即设置主题
+        self.personality_widget.set_theme(self.is_dark_theme)
         tab_widget.addTab(self.personality_widget, "人格选择")
         
         # 记忆管理标签页
         self.memory_widget = MemoryWidget(self.chat_engine)
+        # 立即设置主题
+        self.memory_widget.set_theme(self.is_dark_theme)
         tab_widget.addTab(self.memory_widget, "记忆管理")
         
         layout.addWidget(tab_widget)
@@ -163,10 +172,18 @@ class MainWindow(QMainWindow):
         
         self.setFont(font)
         
-        # 设置样式表
+        # 根据主题设置样式表
+        if self.is_dark_theme:
+            self.set_dark_theme()
+        else:
+            self.set_light_theme()
+    
+    def set_light_theme(self):
+        """设置浅色主题"""
         style = """
         QMainWindow {
             background-color: #f5f5f5;
+            color: #333333;
         }
         QTabWidget::pane {
             border: 1px solid #c0c0c0;
@@ -179,6 +196,7 @@ class MainWindow(QMainWindow):
             background-color: #e0e0e0;
             padding: 8px 16px;
             margin-right: 2px;
+            color: #333333;
         }
         QTabBar::tab:selected {
             background-color: white;
@@ -186,6 +204,176 @@ class MainWindow(QMainWindow):
         }
         QTabBar::tab:hover {
             background-color: #f0f0f0;
+        }
+        QMenuBar {
+            background-color: #f5f5f5;
+            color: #333333;
+        }
+        QMenuBar::item:selected {
+            background-color: #e0e0e0;
+        }
+        QMenu {
+            background-color: white;
+            color: #333333;
+            border: 1px solid #c0c0c0;
+        }
+        QMenu::item:selected {
+            background-color: #007acc;
+            color: white;
+        }
+        QStatusBar {
+            background-color: #f5f5f5;
+            color: #333333;
+        }
+        """
+        self.setStyleSheet(style)
+    
+    def set_dark_theme(self):
+        """设置深色主题"""
+        style = """
+        QMainWindow {
+            background-color: #2b2b2b;
+            color: #ffffff;
+        }
+        QWidget {
+            background-color: #2b2b2b;
+            color: #ffffff;
+        }
+        QTabWidget::pane {
+            border: 1px solid #404040;
+            background-color: #363636;
+        }
+        QTabWidget::tab-bar {
+            alignment: center;
+        }
+        QTabBar::tab {
+            background-color: #404040;
+            padding: 8px 16px;
+            margin-right: 2px;
+            color: #ffffff;
+            border: 1px solid #555555;
+        }
+        QTabBar::tab:selected {
+            background-color: #363636;
+            border-bottom: 2px solid #007acc;
+            border-top: 1px solid #404040;
+            border-left: 1px solid #404040;
+            border-right: 1px solid #404040;
+        }
+        QTabBar::tab:hover {
+            background-color: #505050;
+        }
+        QMenuBar {
+            background-color: #2b2b2b;
+            color: #ffffff;
+            border-bottom: 1px solid #404040;
+        }
+        QMenuBar::item {
+            background-color: transparent;
+            padding: 4px 8px;
+        }
+        QMenuBar::item:selected {
+            background-color: #404040;
+        }
+        QMenu {
+            background-color: #363636;
+            color: #ffffff;
+            border: 1px solid #555555;
+        }
+        QMenu::item {
+            padding: 6px 20px;
+        }
+        QMenu::item:selected {
+            background-color: #007acc;
+            color: white;
+        }
+        QMenu::separator {
+            height: 1px;
+            background-color: #555555;
+            margin: 2px 0px;
+        }
+        QStatusBar {
+            background-color: #2b2b2b;
+            color: #ffffff;
+            border-top: 1px solid #404040;
+        }
+        QSplitter::handle {
+            background-color: #404040;
+        }
+        QSplitter::handle:horizontal {
+            width: 3px;
+        }
+        /* 滚动条样式 */
+        QScrollBar:vertical {
+            background-color: #2b2b2b;
+            width: 12px;
+            border: none;
+        }
+        QScrollBar::handle:vertical {
+            background-color: #555555;
+            border-radius: 6px;
+            min-height: 20px;
+        }
+        QScrollBar::handle:vertical:hover {
+            background-color: #666666;
+        }
+        QScrollBar::add-line:vertical,
+        QScrollBar::sub-line:vertical {
+            height: 0px;
+        }
+        QScrollBar::add-page:vertical,
+        QScrollBar::sub-page:vertical {
+            background-color: transparent;
+        }
+        QScrollBar:horizontal {
+            background-color: #2b2b2b;
+            height: 12px;
+            border: none;
+        }
+        QScrollBar::handle:horizontal {
+            background-color: #555555;
+            border-radius: 6px;
+            min-width: 20px;
+        }
+        QScrollBar::handle:horizontal:hover {
+            background-color: #666666;
+        }
+        QScrollBar::add-line:horizontal,
+        QScrollBar::sub-line:horizontal {
+            width: 0px;
+        }
+        QScrollBar::add-page:horizontal,
+        QScrollBar::sub-page:horizontal {
+            background-color: transparent;
+        }
+        /* 工具提示 */
+        QToolTip {
+            background-color: #363636;
+            color: #ffffff;
+            border: 1px solid #555555;
+            padding: 4px;
+        }
+        /* 消息框 */
+        QMessageBox {
+            background-color: #363636;
+            color: #ffffff;
+        }
+        QMessageBox QPushButton {
+            background-color: #505050;
+            border: 1px solid #666666;
+            padding: 6px 12px;
+            border-radius: 3px;
+            color: #ffffff;
+            min-width: 60px;
+        }
+        QMessageBox QPushButton:hover {
+            background-color: #606060;
+        }
+        QMessageBox QPushButton:default {
+            background-color: #007acc;
+        }
+        QMessageBox QPushButton:default:hover {
+            background-color: #005a9e;
         }
         """
         self.setStyleSheet(style)
@@ -237,8 +425,23 @@ class MainWindow(QMainWindow):
     
     def toggle_theme(self):
         """切换主题"""
-        # 这里可以实现主题切换功能
-        QMessageBox.information(self, '主题切换', '主题切换功能待实现')
+        self.is_dark_theme = not self.is_dark_theme
+        theme_name = 'dark' if self.is_dark_theme else 'light'
+        
+        # 保存主题设置
+        self.settings.set('ui.theme', theme_name)
+        
+        # 更新样式
+        self.set_style()
+        
+        # 通知子组件更新主题
+        self.chat_widget.set_theme(self.is_dark_theme)
+        self.personality_widget.set_theme(self.is_dark_theme)
+        self.memory_widget.set_theme(self.is_dark_theme)
+        
+        # 显示切换提示
+        theme_text = "深色主题" if self.is_dark_theme else "浅色主题"
+        self.status_bar.showMessage(f"已切换到{theme_text}", 2000)
     
     def show_about(self):
         """显示关于对话框"""
@@ -254,14 +457,5 @@ class MainWindow(QMainWindow):
     
     def closeEvent(self, event):
         """关闭事件处理"""
-        reply = QMessageBox.question(
-            self, '退出确认', 
-            '确定要退出 Sentimemory 吗？',
-            QMessageBox.Yes | QMessageBox.No,
-            QMessageBox.No
-        )
-        
-        if reply == QMessageBox.Yes:
-            event.accept()
-        else:
-            event.ignore() 
+        # 直接接受关闭事件，不显示确认对话框
+        event.accept() 

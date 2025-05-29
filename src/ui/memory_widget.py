@@ -19,9 +19,10 @@ class MemoryItemWidget(QFrame):
     edit_requested = pyqtSignal(object)  # 发送记忆项对象
     delete_requested = pyqtSignal(object)  # 发送记忆项对象
     
-    def __init__(self, memory_item):
+    def __init__(self, memory_item, is_dark_theme=False):
         super().__init__()
         self.memory_item = memory_item
+        self.is_dark_theme = is_dark_theme
         self.init_ui()
         self.set_style()
     
@@ -35,95 +36,155 @@ class MemoryItemWidget(QFrame):
         top_layout = QHBoxLayout()
         
         # 类别标签
-        category_label = QLabel(self.memory_item.category)
-        category_label.setStyleSheet("""
-        QLabel {
-            background-color: #007acc;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 10px;
-            font-weight: bold;
-        }
-        """)
-        top_layout.addWidget(category_label)
+        self.category_label = QLabel(self.memory_item.category)
+        top_layout.addWidget(self.category_label)
         
         # 重要性显示
         importance_text = "★" * self.memory_item.importance
-        importance_label = QLabel(importance_text)
-        importance_label.setStyleSheet("color: #ffa500; font-size: 12px;")
-        top_layout.addWidget(importance_label)
+        self.importance_label = QLabel(importance_text)
+        top_layout.addWidget(self.importance_label)
         
         top_layout.addStretch()
         
         # 时间戳
         time_str = datetime.fromisoformat(self.memory_item.timestamp).strftime("%m-%d %H:%M")
-        time_label = QLabel(time_str)
-        time_label.setStyleSheet("color: #888; font-size: 10px;")
-        top_layout.addWidget(time_label)
+        self.time_label = QLabel(time_str)
+        top_layout.addWidget(self.time_label)
         
         layout.addLayout(top_layout)
         
         # 记忆内容
-        content_label = QLabel(self.memory_item.content)
-        content_label.setWordWrap(True)
-        content_label.setStyleSheet("color: #333; font-size: 11px; margin: 5px 0;")
-        layout.addWidget(content_label)
+        self.content_label = QLabel(self.memory_item.content)
+        self.content_label.setWordWrap(True)
+        layout.addWidget(self.content_label)
         
         # 操作按钮
         button_layout = QHBoxLayout()
         button_layout.addStretch()
         
-        edit_btn = QPushButton("编辑")
-        edit_btn.setFixedSize(50, 25)
-        edit_btn.clicked.connect(lambda: self.edit_requested.emit(self.memory_item))
+        self.edit_btn = QPushButton("编辑")
+        self.edit_btn.setFixedSize(50, 25)
+        self.edit_btn.clicked.connect(lambda: self.edit_requested.emit(self.memory_item))
         
-        delete_btn = QPushButton("删除")
-        delete_btn.setFixedSize(50, 25)
-        delete_btn.clicked.connect(lambda: self.delete_requested.emit(self.memory_item))
+        self.delete_btn = QPushButton("删除")
+        self.delete_btn.setFixedSize(50, 25)
+        self.delete_btn.clicked.connect(lambda: self.delete_requested.emit(self.memory_item))
         
-        button_layout.addWidget(edit_btn)
-        button_layout.addWidget(delete_btn)
+        button_layout.addWidget(self.edit_btn)
+        button_layout.addWidget(self.delete_btn)
         
         layout.addLayout(button_layout)
     
     def set_style(self):
         """设置样式"""
-        style = """
-        QFrame {
-            background-color: white;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            margin: 2px;
-        }
-        QFrame:hover {
-            border-color: #007acc;
-            background-color: #f8f9ff;
-        }
-        QPushButton {
-            background-color: #f0f0f0;
-            border: 1px solid #ccc;
-            border-radius: 12px;
-            font-size: 10px;
-        }
-        QPushButton:hover {
-            background-color: #e0e0e0;
-        }
-        """
-        self.setStyleSheet(style)
+        if self.is_dark_theme:
+            # 深色主题
+            frame_style = """
+            QFrame {
+                background-color: #363636;
+                border: 1px solid #555555;
+                border-radius: 8px;
+                margin: 2px;
+            }
+            QFrame:hover {
+                border-color: #007acc;
+                background-color: #404040;
+            }
+            """
+            
+            category_style = """
+            QLabel {
+                background-color: #007acc;
+                color: white;
+                padding: 2px 8px;
+                border-radius: 10px;
+                font-size: 10px;
+                font-weight: bold;
+            }
+            """
+            
+            button_style = """
+            QPushButton {
+                background-color: #505050;
+                border: 1px solid #666666;
+                border-radius: 12px;
+                font-size: 10px;
+                color: #ffffff;
+            }
+            QPushButton:hover {
+                background-color: #606060;
+            }
+            """
+            
+            self.importance_label.setStyleSheet("color: #ffa500; font-size: 12px;")
+            self.time_label.setStyleSheet("color: #bbbbbb; font-size: 10px;")
+            self.content_label.setStyleSheet("color: #ffffff; font-size: 11px; margin: 5px 0;")
+        else:
+            # 浅色主题
+            frame_style = """
+            QFrame {
+                background-color: white;
+                border: 1px solid #e0e0e0;
+                border-radius: 8px;
+                margin: 2px;
+            }
+            QFrame:hover {
+                border-color: #007acc;
+                background-color: #f8f9ff;
+            }
+            """
+            
+            category_style = """
+            QLabel {
+                background-color: #007acc;
+                color: white;
+                padding: 2px 8px;
+                border-radius: 10px;
+                font-size: 10px;
+                font-weight: bold;
+            }
+            """
+            
+            button_style = """
+            QPushButton {
+                background-color: #f0f0f0;
+                border: 1px solid #ccc;
+                border-radius: 12px;
+                font-size: 10px;
+            }
+            QPushButton:hover {
+                background-color: #e0e0e0;
+            }
+            """
+            
+            self.importance_label.setStyleSheet("color: #ffa500; font-size: 12px;")
+            self.time_label.setStyleSheet("color: #888; font-size: 10px;")
+            self.content_label.setStyleSheet("color: #333; font-size: 11px; margin: 5px 0;")
+        
+        self.setStyleSheet(frame_style)
+        self.category_label.setStyleSheet(category_style)
+        self.edit_btn.setStyleSheet(button_style)
+        self.delete_btn.setStyleSheet(button_style)
+    
+    def set_theme(self, is_dark_theme: bool):
+        """设置主题"""
+        self.is_dark_theme = is_dark_theme
+        self.set_style()
 
 
 class MemoryEditDialog(QDialog):
     """记忆编辑对话框"""
     
-    def __init__(self, memory_item=None, parent=None):
+    def __init__(self, memory_item=None, parent=None, is_dark_theme=False):
         super().__init__(parent)
         self.memory_item = memory_item
         self.is_new = memory_item is None
+        self.is_dark_theme = is_dark_theme
         
         self.init_ui()
         if not self.is_new:
             self.load_memory_data()
+        self.set_style()
     
     def init_ui(self):
         """初始化界面"""
@@ -178,6 +239,88 @@ class MemoryEditDialog(QDialog):
             'importance': self.importance_spin.value()
         }
 
+    def set_style(self):
+        """设置样式"""
+        if self.is_dark_theme:
+            style = """
+            QDialog {
+                background-color: #2b2b2b;
+                color: #ffffff;
+            }
+            QLabel {
+                color: #ffffff;
+            }
+            QTextEdit {
+                background-color: #363636;
+                border: 1px solid #555555;
+                color: #ffffff;
+                border-radius: 3px;
+                padding: 4px;
+            }
+            QComboBox {
+                background-color: #363636;
+                border: 1px solid #555555;
+                color: #ffffff;
+                padding: 4px;
+                border-radius: 3px;
+            }
+            QComboBox::drop-down {
+                border: none;
+                background-color: #505050;
+            }
+            QComboBox::down-arrow {
+                image: none;
+                border-style: solid;
+                border-width: 3px;
+                border-color: #ffffff transparent transparent transparent;
+            }
+            QComboBox QAbstractItemView {
+                background-color: #363636;
+                color: #ffffff;
+                selection-background-color: #007acc;
+            }
+            QSpinBox {
+                background-color: #363636;
+                border: 1px solid #555555;
+                color: #ffffff;
+                padding: 4px;
+                border-radius: 3px;
+            }
+            QSpinBox::up-button, QSpinBox::down-button {
+                background-color: #505050;
+                border: 1px solid #666666;
+            }
+            QSpinBox::up-button:hover, QSpinBox::down-button:hover {
+                background-color: #606060;
+            }
+            QDialogButtonBox QPushButton {
+                background-color: #505050;
+                border: 1px solid #666666;
+                padding: 6px 12px;
+                border-radius: 3px;
+                color: #ffffff;
+                min-width: 60px;
+            }
+            QDialogButtonBox QPushButton:hover {
+                background-color: #606060;
+            }
+            QDialogButtonBox QPushButton:default {
+                background-color: #007acc;
+            }
+            QDialogButtonBox QPushButton:default:hover {
+                background-color: #005a9e;
+            }
+            """
+        else:
+            style = """
+            QDialog {
+                background-color: #ffffff;
+                color: #333333;
+            }
+            """
+        
+        self.setStyleSheet(style)
+
 
 class MemoryWidget(QWidget):
     """记忆管理组件"""
@@ -188,6 +331,7 @@ class MemoryWidget(QWidget):
         super().__init__()
         self.chat_engine = chat_engine
         self.memory_items = []
+        self.is_dark_theme = False
         
         self.init_ui()
         self.refresh_memories()
@@ -198,21 +342,189 @@ class MemoryWidget(QWidget):
         layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
         
-        # 标题和统计信息
+        # 创建各个部分
         self.create_header()
         layout.addWidget(self.header_frame)
         
-        # 搜索和过滤
         self.create_search_panel()
         layout.addWidget(self.search_frame)
         
-        # 记忆列表
         self.create_memory_list()
-        layout.addWidget(self.memory_scroll_area)
+        layout.addWidget(self.memory_scroll)
         
-        # 操作按钮
         self.create_action_buttons()
-        layout.addWidget(self.action_frame)
+        layout.addWidget(self.button_frame)
+        
+        # 设置样式
+        self.set_style()
+    
+    def set_style(self):
+        """设置样式"""
+        if self.is_dark_theme:
+            # 深色主题样式
+            main_style = """
+            QWidget {
+                background-color: #2b2b2b;
+                color: #ffffff;
+            }
+            QFrame {
+                background-color: #363636;
+                border: 1px solid #555555;
+                border-radius: 5px;
+            }
+            QScrollArea {
+                background-color: #2b2b2b;
+                border: 1px solid #555555;
+            }
+            QLineEdit {
+                background-color: #363636;
+                border: 1px solid #555555;
+                padding: 4px;
+                border-radius: 3px;
+                color: #ffffff;
+            }
+            QLineEdit:focus {
+                border-color: #007acc;
+            }
+            QComboBox {
+                background-color: #363636;
+                border: 1px solid #555555;
+                padding: 4px;
+                border-radius: 3px;
+                color: #ffffff;
+            }
+            QComboBox::drop-down {
+                background-color: #505050;
+                border: none;
+            }
+            QComboBox::down-arrow {
+                image: none;
+                border-style: solid;
+                border-width: 3px;
+                border-color: #ffffff transparent transparent transparent;
+            }
+            QComboBox QAbstractItemView {
+                background-color: #363636;
+                color: #ffffff;
+                selection-background-color: #007acc;
+            }
+            QPushButton {
+                background-color: #505050;
+                border: 1px solid #666666;
+                padding: 6px 12px;
+                border-radius: 3px;
+                color: #ffffff;
+            }
+            QPushButton:hover {
+                background-color: #606060;
+            }
+            QPushButton:pressed {
+                background-color: #404040;
+            }
+            QLabel {
+                color: #ffffff;
+            }
+            /* 滚动条样式 */
+            QScrollBar:vertical {
+                background-color: #2b2b2b;
+                width: 12px;
+                border: none;
+            }
+            QScrollBar::handle:vertical {
+                background-color: #555555;
+                border-radius: 6px;
+                min-height: 20px;
+            }
+            QScrollBar::handle:vertical:hover {
+                background-color: #666666;
+            }
+            QScrollBar::add-line:vertical,
+            QScrollBar::sub-line:vertical {
+                height: 0px;
+            }
+            QScrollBar::add-page:vertical,
+            QScrollBar::sub-page:vertical {
+                background-color: transparent;
+            }
+            QScrollBar:horizontal {
+                background-color: #2b2b2b;
+                height: 12px;
+                border: none;
+            }
+            QScrollBar::handle:horizontal {
+                background-color: #555555;
+                border-radius: 6px;
+                min-width: 20px;
+            }
+            QScrollBar::handle:horizontal:hover {
+                background-color: #666666;
+            }
+            QScrollBar::add-line:horizontal,
+            QScrollBar::sub-line:horizontal {
+                width: 0px;
+            }
+            QScrollBar::add-page:horizontal,
+            QScrollBar::sub-page:horizontal {
+                background-color: transparent;
+            }
+            """
+            
+            # 设置统计标签样式
+            self.stats_label.setStyleSheet("color: #bbbbbb; font-size: 11px;")
+        else:
+            # 浅色主题样式
+            main_style = """
+            QWidget {
+                background-color: #ffffff;
+                color: #333333;
+            }
+            QFrame {
+                background-color: #f8f9fa;
+                border: 1px solid #e0e0e0;
+                border-radius: 5px;
+            }
+            QScrollArea {
+                background-color: #ffffff;
+                border: 1px solid #e0e0e0;
+            }
+            QLineEdit {
+                background-color: #ffffff;
+                border: 1px solid #ddd;
+                padding: 4px;
+                border-radius: 3px;
+            }
+            QComboBox {
+                background-color: #ffffff;
+                border: 1px solid #ddd;
+                padding: 4px;
+                border-radius: 3px;
+            }
+            QPushButton {
+                background-color: #f0f0f0;
+                border: 1px solid #ccc;
+                padding: 6px 12px;
+                border-radius: 3px;
+            }
+            QPushButton:hover {
+                background-color: #e0e0e0;
+            }
+            QPushButton:pressed {
+                background-color: #d0d0d0;
+            }
+            """
+            
+            # 设置统计标签样式
+            self.stats_label.setStyleSheet("color: #666; font-size: 11px;")
+        
+        self.setStyleSheet(main_style)
+    
+    def set_theme(self, is_dark_theme: bool):
+        """设置主题"""
+        self.is_dark_theme = is_dark_theme
+        self.set_style()
+        
+        # 更新内存项的主题
+        self.update_memory_display()
     
     def create_header(self):
         """创建头部信息"""
@@ -221,33 +533,24 @@ class MemoryWidget(QWidget):
         layout.setContentsMargins(10, 10, 10, 10)
         
         # 标题
-        title_label = QLabel("记忆管理")
+        self.title_label = QLabel("记忆管理")
         try:
             from utils.helpers import get_system_font
             title_font = get_system_font(14, bold=True)
             if title_font:
-                title_label.setFont(title_font)
+                self.title_label.setFont(title_font)
         except ImportError:
             title_font = QFont()
             title_font.setPointSize(14)
             title_font.setBold(True)
-            title_label.setFont(title_font)
-        title_label.setAlignment(Qt.AlignCenter)
-        layout.addWidget(title_label)
+            self.title_label.setFont(title_font)
+        self.title_label.setAlignment(Qt.AlignCenter)
+        layout.addWidget(self.title_label)
         
         # 统计信息
         self.stats_label = QLabel("记忆统计信息")
         self.stats_label.setAlignment(Qt.AlignCenter)
-        self.stats_label.setStyleSheet("color: #666; font-size: 11px;")
         layout.addWidget(self.stats_label)
-        
-        self.header_frame.setStyleSheet("""
-        QFrame {
-            background-color: #f8f9fa;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-        }
-        """)
     
     def create_search_panel(self):
         """创建搜索面板"""
@@ -266,31 +569,12 @@ class MemoryWidget(QWidget):
         self.category_filter.addItems(["全部", "个人信息", "喜好", "情感", "重要事件", "general"])
         self.category_filter.currentTextChanged.connect(self.on_filter_changed)
         layout.addWidget(self.category_filter)
-        
-        self.search_frame.setStyleSheet("""
-        QFrame {
-            background-color: white;
-            border: 1px solid #e0e0e0;
-            border-radius: 5px;
-        }
-        QLineEdit {
-            border: 1px solid #ccc;
-            border-radius: 15px;
-            padding: 5px 10px;
-        }
-        QComboBox {
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            padding: 5px;
-            min-width: 80px;
-        }
-        """)
     
     def create_memory_list(self):
         """创建记忆列表"""
-        self.memory_scroll_area = QScrollArea()
-        self.memory_scroll_area.setWidgetResizable(True)
-        self.memory_scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.memory_scroll = QScrollArea()
+        self.memory_scroll.setWidgetResizable(True)
+        self.memory_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         
         self.memory_container = QWidget()
         self.memory_layout = QVBoxLayout(self.memory_container)
@@ -298,12 +582,12 @@ class MemoryWidget(QWidget):
         self.memory_layout.setSpacing(5)
         self.memory_layout.addStretch()
         
-        self.memory_scroll_area.setWidget(self.memory_container)
+        self.memory_scroll.setWidget(self.memory_container)
     
     def create_action_buttons(self):
         """创建操作按钮"""
-        self.action_frame = QFrame()
-        layout = QHBoxLayout(self.action_frame)
+        self.button_frame = QFrame()
+        layout = QHBoxLayout(self.button_frame)
         layout.setContentsMargins(10, 5, 10, 5)
         
         # 添加记忆按钮
@@ -322,23 +606,6 @@ class MemoryWidget(QWidget):
         clear_btn = QPushButton("清空记忆")
         clear_btn.clicked.connect(self.clear_memories)
         layout.addWidget(clear_btn)
-        
-        self.action_frame.setStyleSheet("""
-        QPushButton {
-            background-color: #007acc;
-            color: white;
-            border: none;
-            border-radius: 15px;
-            padding: 8px 16px;
-            font-weight: bold;
-        }
-        QPushButton:hover {
-            background-color: #005a9e;
-        }
-        QPushButton:pressed {
-            background-color: #004080;
-        }
-        """)
     
     def refresh_memories(self):
         """刷新记忆列表"""
@@ -381,7 +648,7 @@ class MemoryWidget(QWidget):
         
         # 添加记忆项
         for memory in filtered_memories:
-            memory_widget = MemoryItemWidget(memory)
+            memory_widget = MemoryItemWidget(memory, self.is_dark_theme)
             memory_widget.edit_requested.connect(self.edit_memory)
             memory_widget.delete_requested.connect(self.delete_memory)
             
@@ -392,7 +659,12 @@ class MemoryWidget(QWidget):
         if not filtered_memories:
             no_memory_label = QLabel("暂无记忆数据")
             no_memory_label.setAlignment(Qt.AlignCenter)
-            no_memory_label.setStyleSheet("color: #888; font-size: 12px; padding: 20px;")
+            
+            # 根据主题设置样式
+            if self.is_dark_theme:
+                no_memory_label.setStyleSheet("color: #bbbbbb; font-size: 12px; padding: 20px;")
+            else:
+                no_memory_label.setStyleSheet("color: #888; font-size: 12px; padding: 20px;")
             
             # 在弹性空间之前插入提示标签
             self.memory_layout.insertWidget(self.memory_layout.count() - 1, no_memory_label)
@@ -426,7 +698,7 @@ class MemoryWidget(QWidget):
     
     def add_memory(self):
         """添加记忆"""
-        dialog = MemoryEditDialog(parent=self)
+        dialog = MemoryEditDialog(parent=self, is_dark_theme=self.is_dark_theme)
         if dialog.exec_() == QDialog.Accepted:
             data = dialog.get_memory_data()
             if data['content']:
@@ -448,7 +720,7 @@ class MemoryWidget(QWidget):
     
     def edit_memory(self, memory_item):
         """编辑记忆"""
-        dialog = MemoryEditDialog(memory_item, parent=self)
+        dialog = MemoryEditDialog(memory_item, parent=self, is_dark_theme=self.is_dark_theme)
         if dialog.exec_() == QDialog.Accepted:
             data = dialog.get_memory_data()
             if data['content']:
