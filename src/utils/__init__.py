@@ -27,6 +27,16 @@ from .helpers import (
     get_system_info
 )
 
+from .logger import (
+    SentimemoryLogger,
+    get_logger,
+    get_ai_logger,
+    debug,
+    info,
+    warning,
+    error
+)
+
 # 定义包的公开接口
 __all__ = [
     'ensure_dir_exists',
@@ -42,5 +52,12 @@ __all__ = [
     'get_personality_color',
     'format_file_size',
     'get_app_version',
-    'get_system_info'
+    'get_system_info',
+    'SentimemoryLogger',
+    'get_logger',
+    'get_ai_logger',
+    'debug',
+    'info',
+    'warning',
+    'error'
 ] 
