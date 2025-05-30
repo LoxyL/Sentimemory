@@ -465,5 +465,7 @@ class MainWindow(QMainWindow):
     
     def closeEvent(self, event):
         """关闭事件处理"""
-        # 直接接受关闭事件，不显示确认对话框
+        # 首先清除对话
+        self.clear_chat()
+        
         event.accept() 

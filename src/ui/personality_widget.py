@@ -5,9 +5,9 @@
 
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel, 
                              QPushButton, QButtonGroup, QRadioButton,
-                             QTextEdit, QFrame, QScrollArea)
-from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtGui import QFont, QPalette
+                             QTextEdit, QFrame, QScrollArea, QGraphicsDropShadowEffect)
+from PyQt5.QtCore import Qt, pyqtSignal, QPropertyAnimation, QEasingCurve, pyqtProperty
+from PyQt5.QtGui import QFont, QPalette, QColor
 
 
 class PersonalityCard(QFrame):
@@ -27,112 +27,173 @@ class PersonalityCard(QFrame):
     
     def init_ui(self):
         """初始化界面"""
+        self.setFixedHeight(140)  # 增加高度给更多空间
+        
         layout = QVBoxLayout(self)
-        layout.setContentsMargins(15, 15, 15, 15)
-        layout.setSpacing(8)
+        layout.setContentsMargins(20, 18, 20, 18)  # 增加边距
+        layout.setSpacing(12)
+        
+        # 顶部区域：人格名称和装饰点
+        top_layout = QHBoxLayout()
         
         # 人格名称
         self.name_label = QLabel(self.personality_data.get('name', self.personality_id))
-        # 使用系统兼容的字体
-        try:
-            from utils.helpers import get_system_font
-            name_font = get_system_font(12, bold=True)
-            if name_font:
-                self.name_label.setFont(name_font)
-        except ImportError:
-            # 如果导入失败，使用默认字体
-            name_font = QFont()
-            name_font.setPointSize(12)
-            name_font.setBold(True)
-            self.name_label.setFont(name_font)
-        layout.addWidget(self.name_label)
+        name_font = QFont()
+        name_font.setPointSize(14)
+        name_font.setBold(True)
+        self.name_label.setFont(name_font)
+        top_layout.addWidget(self.name_label)
+        
+        top_layout.addStretch()
+        
+        # 装饰点（显示人格类型）
+        self.type_dot = QLabel("●")
+        type_font = QFont()
+        type_font.setPointSize(16)
+        self.type_dot.setFont(type_font)
+        top_layout.addWidget(self.type_dot)
+        
+        layout.addLayout(top_layout)
         
         # 人格描述
         self.desc_label = QLabel(self.personality_data.get('description', ''))
         self.desc_label.setWordWrap(True)
+        desc_font = QFont()
+        desc_font.setPointSize(11)
+        self.desc_label.setFont(desc_font)
         layout.addWidget(self.desc_label)
         
-        # 人格特征
+        # 特征标签区域
         traits = self.personality_data.get('personality_traits', [])
         if traits:
-            traits_text = "特征: " + ", ".join(traits)
-            self.traits_label = QLabel(traits_text)
-            self.traits_label.setWordWrap(True)
-            layout.addWidget(self.traits_label)
+            traits_layout = QHBoxLayout()
+            traits_layout.setSpacing(6)
+            
+            # 只显示前3个特征，避免拥挤
+            for i, trait in enumerate(traits[:3]):
+                trait_label = QLabel(trait)
+                trait_font = QFont()
+                trait_font.setPointSize(9)
+                trait_label.setFont(trait_font)
+                trait_label.setAlignment(Qt.AlignCenter)
+                traits_layout.addWidget(trait_label)
+                
+                # 保存特征标签的引用，用于样式设置
+                if not hasattr(self, 'trait_labels'):
+                    self.trait_labels = []
+                self.trait_labels.append(trait_label)
+            
+            traits_layout.addStretch()
+            layout.addLayout(traits_layout)
         else:
-            self.traits_label = None
-        
-        # 设置固定高度
-        self.setFixedHeight(120)
+            self.trait_labels = []
+    
+    def get_personality_color(self):
+        """根据人格ID获取专属颜色"""
+        colors = {
+            "friendly": "#4CAF50",      # 绿色 - 友善
+            "humorous": "#FF9800",      # 橙色 - 幽默
+            "knowledgeable": "#2196F3", # 蓝色 - 知识
+            "creative": "#9C27B0",      # 紫色 - 创意
+            "calm": "#607D8B"           # 蓝灰色 - 沉稳
+        }
+        return colors.get(self.personality_id, "#007acc")
     
     def set_style(self):
         """设置样式"""
         self.set_selected(self.is_selected)
-        self.update_label_colors()
+        self.update_all_colors()
     
-    def update_label_colors(self):
-        """更新标签颜色"""
-        if self.is_dark_theme:
-            desc_color = "#bbbbbb"
-            traits_color = "#999999"
-        else:
-            desc_color = "#666666"
-            traits_color = "#888888"
+    def update_all_colors(self):
+        """更新所有元素的颜色"""
+        personality_color = self.get_personality_color()
         
-        self.desc_label.setStyleSheet(f"color: {desc_color}; font-size: 11px;")
-        if self.traits_label:
-            self.traits_label.setStyleSheet(f"color: {traits_color}; font-size: 10px; font-style: italic;")
+        if self.is_dark_theme:
+            name_color = "#ffffff"
+            desc_color = "#cccccc"
+            trait_bg = "#404040"
+            trait_text = "#e0e0e0"
+        else:
+            name_color = "#2c3e50"
+            desc_color = "#5a6c7d"
+            trait_bg = "#f8f9fa"
+            trait_text = "#6c757d"
+        
+        # 设置名称颜色
+        self.name_label.setStyleSheet(f"color: {name_color}; background: transparent; border: none;")
+        
+        # 设置描述颜色
+        self.desc_label.setStyleSheet(f"""
+            color: {desc_color}; 
+            background: transparent; 
+            border: none;
+            line-height: 1.4;
+        """)
+        
+        # 设置装饰点颜色
+        self.type_dot.setStyleSheet(f"color: {personality_color}; background: transparent; border: none;")
+        
+        # 设置特征标签样式
+        for trait_label in self.trait_labels:
+            trait_label.setStyleSheet(f"""
+                background-color: {trait_bg};
+                color: {trait_text};
+                border: 1px solid {personality_color}40;
+                border-radius: 10px;
+                padding: 3px 8px;
+                margin: 1px;
+            """)
     
     def set_selected(self, selected: bool):
         """设置选中状态"""
         self.is_selected = selected
+        personality_color = self.get_personality_color()
         
         if self.is_dark_theme:
             if selected:
-                style = """
-                QFrame {
-                    background-color: #003d66;
-                    border: 2px solid #007acc;
-                    border-radius: 10px;
-                    margin: 2px;
-                }
-                """
+                bg_color = "#2a2a2a"
+                border_color = personality_color
+                border_width = "2px"
+                shadow = f"0px 6px 20px rgba(0, 0, 0, 0.6), 0px 0px 15px {personality_color}60"
             else:
-                style = """
-                QFrame {
-                    background-color: #363636;
-                    border: 2px solid #555555;
-                    border-radius: 10px;
-                    margin: 2px;
-                }
-                QFrame:hover {
-                    border-color: #007acc;
-                    background-color: #404040;
-                }
-                """
+                bg_color = "#363636"
+                border_color = "#555555"
+                border_width = "1px"
+                shadow = "0px 2px 8px rgba(0, 0, 0, 0.4)"
         else:
             if selected:
-                style = """
-                QFrame {
-                    background-color: #e6f3ff;
-                    border: 2px solid #007acc;
-                    border-radius: 10px;
-                    margin: 2px;
-                }
-                """
+                bg_color = "#ffffff"
+                border_color = personality_color
+                border_width = "2px"
+                shadow = f"0px 6px 20px rgba(0, 0, 0, 0.15), 0px 0px 15px {personality_color}40"
             else:
-                style = """
-                QFrame {
-                    background-color: white;
-                    border: 2px solid #e0e0e0;
-                    border-radius: 10px;
-                    margin: 2px;
-                }
-                QFrame:hover {
-                    border-color: #007acc;
-                    background-color: #f8f9ff;
-                }
-                """
+                bg_color = "#ffffff"
+                border_color = "#e1e8ed"
+                border_width = "1px"
+                shadow = "0px 2px 8px rgba(0, 0, 0, 0.1)"
+        
+        # 悬浮时的样式
+        if self.is_dark_theme:
+            hover_shadow = f"0px 8px 25px rgba(0, 0, 0, 0.7), 0px 0px 20px {personality_color}80"
+        else:
+            hover_shadow = f"0px 8px 25px rgba(0, 0, 0, 0.2), 0px 0px 20px {personality_color}60"
+        
+        style = f"""
+        PersonalityCard {{
+            background-color: {bg_color};
+            border: {border_width} solid {border_color};
+            border-radius: 16px;
+            margin: 3px;
+            box-shadow: {shadow};
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }}
+        PersonalityCard:hover {{
+            border-color: {personality_color};
+            box-shadow: {hover_shadow};
+            transform: translateY(-3px);
+        }}
+        """
+        
         self.setStyleSheet(style)
     
     def set_theme(self, is_dark_theme: bool):
