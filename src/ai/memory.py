@@ -80,33 +80,23 @@ class MemoryManager:
             conn = sqlite3.connect(self.db_path)
             cursor = conn.cursor()
             
-            # 创建记忆表
-            cursor.execute('''
-                CREATE TABLE IF NOT EXISTS memories (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    personality_id TEXT NOT NULL,
-                    content TEXT NOT NULL,
-                    category TEXT DEFAULT 'general',
-                    importance INTEGER DEFAULT 1,
-                    timestamp TEXT NOT NULL,
-                    tags TEXT DEFAULT '[]',
-                    created_at TEXT DEFAULT CURRENT_TIMESTAMP
-                )
-            ''')
+            # 检查表是否存在
+            cursor.execute("""
+                SELECT name FROM sqlite_master 
+                WHERE type='table' AND name='memories'
+            """)
+            table_exists = cursor.fetchone() is not None
+            
+            if not table_exists:
+                # 创建新表
+                self._create_table(cursor)
+                self.logger.info("创建新的记忆数据库表")
+            else:
+                # 检查并升级现有表
+                self._upgrade_table_if_needed(cursor)
             
             # 创建索引
-            cursor.execute('''
-                CREATE INDEX IF NOT EXISTS idx_personality_id 
-                ON memories(personality_id)
-            ''')
-            cursor.execute('''
-                CREATE INDEX IF NOT EXISTS idx_category 
-                ON memories(category)
-            ''')
-            cursor.execute('''
-                CREATE INDEX IF NOT EXISTS idx_importance 
-                ON memories(importance)
-            ''')
+            self._create_indexes(cursor)
             
             conn.commit()
             conn.close()
@@ -117,6 +107,46 @@ class MemoryManager:
             self.logger.log_error_with_context(e, "记忆数据库初始化", {
                 "db_path": self.db_path
             })
+    
+    def _create_table(self, cursor):
+        """创建记忆表"""
+        cursor.execute('''
+            CREATE TABLE memories (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                personality_id TEXT NOT NULL,
+                content TEXT NOT NULL,
+                category TEXT DEFAULT 'general',
+                importance INTEGER DEFAULT 1,
+                timestamp TEXT NOT NULL,
+                tags TEXT DEFAULT '[]',
+                created_at TEXT DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+    
+    def _upgrade_table_if_needed(self, cursor):
+        """检查并升级表结构"""
+        # 检查tags列是否存在
+        cursor.execute("PRAGMA table_info(memories)")
+        columns = [column[1] for column in cursor.fetchall()]
+        
+        if 'tags' not in columns:
+            self.logger.info("检测到旧版数据库，正在升级...")
+            cursor.execute("ALTER TABLE memories ADD COLUMN tags TEXT DEFAULT '[]'")
+            self.logger.info("已添加tags列到memories表")
+    
+    def _create_indexes(self, cursor):
+        """创建索引"""
+        indexes = [
+            ("idx_personality_id", "personality_id"),
+            ("idx_category", "category"),
+            ("idx_importance", "importance")
+        ]
+        
+        for index_name, column in indexes:
+            cursor.execute(f'''
+                CREATE INDEX IF NOT EXISTS {index_name} 
+                ON memories({column})
+            ''')
     
     def add_memory(self, personality_id: str, memory_item: MemoryItem) -> bool:
         """添加记忆"""

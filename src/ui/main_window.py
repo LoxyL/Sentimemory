@@ -68,6 +68,14 @@ class MainWindow(QMainWindow):
         splitter.setStretchFactor(0, 0)
         splitter.setStretchFactor(1, 1)
         
+        # 设置左边栏的固定宽度范围
+        left_panel.setMinimumWidth(280)
+        left_panel.setMaximumWidth(350)
+        
+        # 设置分割器不允许折叠左边栏
+        splitter.setCollapsible(0, False)
+        splitter.setCollapsible(1, False)
+        
         # 创建菜单栏
         self.create_menu_bar()
         

@@ -23,6 +23,11 @@ class MemoryItemWidget(QFrame):
         super().__init__()
         self.memory_item = memory_item
         self.is_dark_theme = is_dark_theme
+        
+        # 设置固定尺寸约束
+        self.setMaximumWidth(320)
+        self.setMaximumHeight(120)
+        
         self.init_ui()
         self.set_style()
     
@@ -54,8 +59,15 @@ class MemoryItemWidget(QFrame):
         layout.addLayout(top_layout)
         
         # 记忆内容
-        self.content_label = QLabel(self.memory_item.content)
+        content_text = self.memory_item.content
+        # 限制显示长度，避免撑大布局
+        if len(content_text) > 80:
+            content_text = content_text[:80] + "..."
+        
+        self.content_label = QLabel(content_text)
         self.content_label.setWordWrap(True)
+        self.content_label.setMaximumHeight(50)  # 限制高度
+        self.content_label.setAlignment(Qt.AlignTop)
         layout.addWidget(self.content_label)
         
         # 操作按钮
@@ -575,8 +587,12 @@ class MemoryWidget(QWidget):
         self.memory_scroll = QScrollArea()
         self.memory_scroll.setWidgetResizable(True)
         self.memory_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.memory_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         
         self.memory_container = QWidget()
+        # 设置容器固定宽度，防止撑大左边栏
+        self.memory_container.setMaximumWidth(320)
+        
         self.memory_layout = QVBoxLayout(self.memory_container)
         self.memory_layout.setContentsMargins(0, 0, 0, 0)
         self.memory_layout.setSpacing(5)

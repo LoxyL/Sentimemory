@@ -3,5 +3,6 @@ __pycache__
 .DS_Store
 .vscode
 app_settings.json
+memories.db
 data/
 log/

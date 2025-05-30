@@ -53,6 +53,10 @@ class ChatEngine:
         self.chat_history: List[ChatMessage] = []
         self.response_callback: Optional[Callable] = None
         
+        # 对话历史管理配置
+        self.max_chat_history = 30  # 最多保留30轮对话
+        self.memory_extract_count = 10  # 达到上限时提取最早10轮的记忆
+        
         # 使用传入的AppSettings或创建新实例
         self.app_settings = app_settings or AppSettings()
         self.logger.debug("AppSettings已加载", {
@@ -60,7 +64,10 @@ class ChatEngine:
         })
         
         self._setup_openai_client()
-        self.logger.info("ChatEngine初始化完成")
+        self.logger.info("ChatEngine初始化完成", {
+            "max_chat_history": self.max_chat_history,
+            "memory_extract_count": self.memory_extract_count
+        })
     
     def _setup_openai_client(self):
         """设置OpenAI客户端"""
@@ -110,13 +117,13 @@ class ChatEngine:
             "chat_history_length": len(self.chat_history)
         })
         
+        # 管理对话历史：在添加新消息前检查是否需要记忆提取
+        self._manage_chat_history_before_add()
+        
         # 添加用户消息到历史
         user_message = ChatMessage(content, "user")
         self.chat_history.append(user_message)
         self.logger.debug("用户消息已添加到聊天历史")
-        
-        # 提取并保存关键信息到记忆
-        self._extract_and_save_memories(content)
         
         # 生成AI回复
         ai_response = self._generate_response(content)
@@ -129,10 +136,196 @@ class ChatEngine:
         self.logger.info("消息处理完成", {
             "processing_time_seconds": processing_time,
             "response_length": len(ai_response),
-            "response_preview": ai_response[:100] + "..." if len(ai_response) > 100 else ai_response
+            "response_preview": ai_response[:100] + "..." if len(ai_response) > 100 else ai_response,
+            "final_chat_history_length": len(self.chat_history)
         })
         
         return ai_response
+    
+    def _manage_chat_history_before_add(self):
+        """在添加新消息前管理对话历史"""
+        current_count = len(self.chat_history)
+        
+        self.logger.debug("检查对话历史长度", {
+            "current_count": current_count,
+            "max_limit": self.max_chat_history
+        })
+        
+        # 如果当前对话数量达到上限，需要进行记忆提取和清理
+        if current_count >= self.max_chat_history:
+            self.logger.info("对话历史达到上限，开始提取早期对话记忆", {
+                "current_count": current_count,
+                "extract_count": self.memory_extract_count
+            })
+            
+            # 提取最早的对话进行记忆处理
+            early_conversations = self.chat_history[:self.memory_extract_count]
+            self._extract_memories_from_conversations(early_conversations)
+            
+            # 移除已处理的早期对话
+            self.chat_history = self.chat_history[self.memory_extract_count:]
+            
+            self.logger.info("早期对话记忆提取完成", {
+                "extracted_count": len(early_conversations),
+                "remaining_count": len(self.chat_history)
+            })
+    
+    def _extract_memories_from_conversations(self, conversations: List[ChatMessage]):
+        """从对话片段中提取记忆"""
+        if not conversations:
+            return
+        
+        personality_id = self.personality_manager.get_current_personality_id()
+        if not personality_id or not self.client:
+            self.logger.warning("无法提取对话记忆：缺少人格ID或AI客户端")
+            return
+        
+        self.logger.debug("开始从对话片段提取记忆", {
+            "conversation_count": len(conversations),
+            "personality_id": personality_id
+        })
+        
+        # 将对话转换为文本
+        conversation_text = self._conversations_to_text(conversations)
+        
+        try:
+            # 使用AI从对话片段中提取关键记忆
+            system_prompt = """你是一个记忆提取专家。请从这段对话历史中提取重要信息，包括：
+1. 用户表达的重要事件和经历
+2. 用户的情感状态和变化
+3. 用户的个人偏好和兴趣
+4. 重要的日期、时间或人物关系
+5. 用户的目标、计划或担忧
+6. 用户的个人信息（姓名、年龄、职业、居住地等）
+7. 用户的学习和工作情况
+8. 用户的生活习惯和爱好
+
+请仔细分析整段对话，提取所有有价值的信息。每个记忆项应该是独立且有意义的。
+
+请以JSON格式返回，每个记忆项包含：
+- content: 记忆内容描述（要完整且具体）
+- category: 分类（personal/event/emotion/preference/date/relationship/goal/habit/work/study）
+- importance: 重要性（1-5，5最重要）
+- tags: 相关标签列表
+
+尽可能多地提取有价值的信息，不要遗漏重要细节。
+
+示例格式：
+[
+    {
+        "content": "用户名叫张三，今年25岁",
+        "category": "personal",
+        "importance": 4,
+        "tags": ["姓名", "年龄", "基本信息"]
+    },
+    {
+        "content": "用户正在学习Python编程，目标是成为AI工程师",
+        "category": "goal",
+        "importance": 5,
+        "tags": ["学习", "编程", "Python", "AI工程师", "职业目标"]
+    },
+    {
+        "content": "用户每天喝3-4杯咖啡，咖啡是日常生活的重要部分",
+        "category": "habit",
+        "importance": 3,
+        "tags": ["咖啡", "饮食习惯", "日常生活"]
+    }
+]"""
+
+            messages = [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": f"请从以下对话历史中提取关键记忆：\n\n{conversation_text}"}
+            ]
+            
+            self.logger.log_ai_request(
+                model=self.model,
+                messages=messages,
+                timeout=self.timeout,
+                purpose="对话记忆提取"
+            )
+
+            extract_start_time = time.time()
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=messages,
+                timeout=self.timeout
+            )
+            
+            ai_response = response.choices[0].message.content
+            extract_duration = time.time() - extract_start_time
+            
+            # 记录使用信息
+            usage_info = None
+            if hasattr(response, 'usage'):
+                usage_info = {
+                    "prompt_tokens": response.usage.prompt_tokens,
+                    "completion_tokens": response.usage.completion_tokens,
+                    "total_tokens": response.usage.total_tokens
+                }
+            
+            self.logger.log_ai_response(
+                response_content=ai_response,
+                usage_info=usage_info,
+                duration=extract_duration
+            )
+            
+            # 解析AI返回的记忆数据
+            try:
+                # 清理AI返回的内容，移除可能的markdown代码块标记
+                cleaned_response = ai_response.strip()
+                if cleaned_response.startswith("```json"):
+                    cleaned_response = cleaned_response[7:]  # 移除 ```json
+                if cleaned_response.endswith("```"):
+                    cleaned_response = cleaned_response[:-3]  # 移除结尾的 ```
+                cleaned_response = cleaned_response.strip()
+                
+                memories_data = json.loads(cleaned_response)
+                if isinstance(memories_data, list):
+                    saved_count = 0
+                    for memory_data in memories_data:
+                        memory = MemoryItem(
+                            content=memory_data.get('content', ''),
+                            category=memory_data.get('category', 'general'),
+                            importance=memory_data.get('importance', 3),
+                            tags=memory_data.get('tags', [])
+                        )
+                        self.memory_manager.add_memory(personality_id, memory)
+                        self.logger.log_memory_operation("添加(对话提取)", personality_id, memory_data)
+                        saved_count += 1
+                    
+                    self.logger.info(f"对话记忆提取成功，从{len(conversations)}轮对话中保存了{saved_count}个记忆项", {
+                        "conversation_count": len(conversations),
+                        "extracted_memories": saved_count,
+                        "memory_categories": list(set(m.get('category', 'unknown') for m in memories_data))
+                    })
+                    
+                else:
+                    self.logger.warning("AI返回的对话记忆数据格式不是列表", {
+                        "response_type": type(memories_data).__name__,
+                        "response_content": cleaned_response
+                    })
+                    
+            except json.JSONDecodeError as e:
+                self.logger.warning("AI返回的对话记忆JSON格式无效", {
+                    "json_error": str(e),
+                    "ai_response": ai_response,
+                    "cleaned_response": cleaned_response
+                })
+                
+        except Exception as e:
+            self.logger.log_error_with_context(e, "对话记忆提取", {
+                "personality_id": personality_id,
+                "conversation_count": len(conversations)
+            })
+    
+    def _conversations_to_text(self, conversations: List[ChatMessage]) -> str:
+        """将对话列表转换为文本格式"""
+        text_parts = []
+        for msg in conversations:
+            sender_label = "用户" if msg.sender == "user" else "AI"
+            text_parts.append(f"{sender_label}: {msg.content}")
+        
+        return "\n".join(text_parts)
     
     def _extract_and_save_memories(self, user_input: str):
         """使用AI提取并保存用户输入中的关键信息"""
@@ -195,7 +388,7 @@ class ChatEngine:
             )
             
             ai_response = response.choices[0].message.content
-            extraction_time = time.time() - start_time
+            extract_start_time = time.time()
             
             # 记录使用信息
             usage_info = None
@@ -209,7 +402,7 @@ class ChatEngine:
             self.logger.log_ai_response(
                 response_content=ai_response,
                 usage_info=usage_info,
-                duration=extraction_time
+                duration=time.time() - extract_start_time
             )
             
             # 解析AI返回的JSON
@@ -428,8 +621,25 @@ class ChatEngine:
     def clear_chat_history(self):
         """清空聊天历史"""
         old_count = len(self.chat_history)
+        
+        self.logger.info("开始清空聊天历史", {
+            "current_count": old_count
+        })
+        
+        # 在清空前提取所有对话的记忆
+        if old_count > 0:
+            self.logger.info("在清空前提取所有对话记忆", {
+                "total_conversations": old_count
+            })
+            self._extract_memories_from_conversations(self.chat_history)
+        
+        # 清空聊天历史
         self.chat_history.clear()
-        self.logger.info("聊天历史已清空", {"cleared_count": old_count})
+        
+        self.logger.info("聊天历史已清空", {
+            "cleared_count": old_count,
+            "extracted_memories": old_count > 0
+        })
     
     def switch_personality(self, personality_id: str) -> bool:
         """切换人格"""
