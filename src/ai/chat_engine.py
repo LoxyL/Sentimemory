@@ -509,7 +509,16 @@ class ChatEngine:
             system_prompt = f"""你是一个AI助手，具有以下人格特征：
 {context}
 
-请根据这些信息和对话历史，以符合人格特征的方式回复用户。保持对话的连贯性和个性化。"""
+请根据这些信息和对话历史，以符合人格特征的方式回复用户。保持对话的连贯性和个性化。
+
+注意：
+1. 不要使用markdown格式
+2. 不要使用代码块
+3. 不要使用特殊字符
+4. 语气自然，不要像个AI
+5. 对话内容尽量保持在100字以内
+6. 对话内容尽量是一段话
+"""
 
             messages.insert(0, {"role": "system", "content": system_prompt})
             messages.append({"role": "user", "content": user_input})
