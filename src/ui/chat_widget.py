@@ -25,6 +25,9 @@ class ChatBubble(QFrame):
     
     def init_ui(self):
         """初始化界面"""
+        # 设置框架样式，确保没有边框
+        self.setFrameStyle(QFrame.NoFrame)
+        
         layout = QVBoxLayout(self)
         layout.setContentsMargins(10, 8, 10, 8)
         
@@ -52,6 +55,7 @@ class ChatBubble(QFrame):
             QFrame {
                 background-color: #007acc;
                 color: white;
+                border: none;
                 border-radius: 15px;
                 margin-left: 50px;
                 margin-right: 10px;
@@ -59,6 +63,7 @@ class ChatBubble(QFrame):
             QLabel {
                 background-color: transparent;
                 color: white;
+                border: none;
             }
             """
         elif self.sender == "ai":
@@ -74,6 +79,7 @@ class ChatBubble(QFrame):
             QFrame {{
                 background-color: {bg_color};
                 color: {text_color};
+                border: none;
                 border-radius: 15px;
                 margin-left: 10px;
                 margin-right: 50px;
@@ -81,6 +87,7 @@ class ChatBubble(QFrame):
             QLabel {{
                 background-color: transparent;
                 color: {text_color};
+                border: none;
             }}
             """
         else:
@@ -96,6 +103,7 @@ class ChatBubble(QFrame):
             QFrame {{
                 background-color: {bg_color};
                 color: {text_color};
+                border: none;
                 border-radius: 10px;
                 margin-left: 100px;
                 margin-right: 100px;
@@ -103,6 +111,7 @@ class ChatBubble(QFrame):
             QLabel {{
                 background-color: transparent;
                 color: {text_color};
+                border: none;
                 text-align: center;
             }}
             """
@@ -166,6 +175,7 @@ class ChatWidget(QWidget):
     def create_input_area(self):
         """创建输入区域"""
         self.input_frame = QFrame()
+        self.input_frame.setFrameStyle(QFrame.NoFrame)  # 确保没有边框
         self.input_frame.setFixedHeight(80)
         
         layout = QHBoxLayout(self.input_frame)
@@ -200,7 +210,7 @@ class ChatWidget(QWidget):
         }
         QFrame {
             background-color: #f8f9fa;
-            border-top: 1px solid #e0e0e0;
+            border: none;
         }
         QLineEdit {
             border: 2px solid #e0e0e0;
@@ -242,7 +252,7 @@ class ChatWidget(QWidget):
         }
         QFrame {
             background-color: #1e1e1e;
-            border-top: 1px solid #404040;
+            border: none;
         }
         QLineEdit {
             border: 2px solid #555555;
