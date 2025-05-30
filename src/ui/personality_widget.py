@@ -21,6 +21,7 @@ class PersonalityCard(QFrame):
         self.personality_data = personality_data
         self.is_selected = False
         self.is_dark_theme = is_dark_theme
+        self.shadow_effect = None
         
         self.init_ui()
         self.set_style()
@@ -144,6 +145,23 @@ class PersonalityCard(QFrame):
                 margin: 1px;
             """)
     
+    def create_shadow_effect(self, blur_radius: int = 10, offset_x: int = 0, offset_y: int = 2):
+        """创建阴影效果"""
+        if self.shadow_effect:
+            self.setGraphicsEffect(None)
+        
+        self.shadow_effect = QGraphicsDropShadowEffect()
+        self.shadow_effect.setBlurRadius(blur_radius)
+        self.shadow_effect.setXOffset(offset_x)
+        self.shadow_effect.setYOffset(offset_y)
+        
+        if self.is_dark_theme:
+            self.shadow_effect.setColor(QColor(0, 0, 0, 150))
+        else:
+            self.shadow_effect.setColor(QColor(0, 0, 0, 80))
+        
+        self.setGraphicsEffect(self.shadow_effect)
+    
     def set_selected(self, selected: bool):
         """设置选中状态"""
         self.is_selected = selected
@@ -154,52 +172,59 @@ class PersonalityCard(QFrame):
                 bg_color = "#2a2a2a"
                 border_color = personality_color
                 border_width = "2px"
-                shadow = f"0px 6px 20px rgba(0, 0, 0, 0.6), 0px 0px 15px {personality_color}60"
             else:
                 bg_color = "#363636"
                 border_color = "#555555"
                 border_width = "1px"
-                shadow = "0px 2px 8px rgba(0, 0, 0, 0.4)"
         else:
             if selected:
                 bg_color = "#ffffff"
                 border_color = personality_color
                 border_width = "2px"
-                shadow = f"0px 6px 20px rgba(0, 0, 0, 0.15), 0px 0px 15px {personality_color}40"
             else:
                 bg_color = "#ffffff"
                 border_color = "#e1e8ed"
                 border_width = "1px"
-                shadow = "0px 2px 8px rgba(0, 0, 0, 0.1)"
         
-        # 悬浮时的样式
-        if self.is_dark_theme:
-            hover_shadow = f"0px 8px 25px rgba(0, 0, 0, 0.7), 0px 0px 20px {personality_color}80"
-        else:
-            hover_shadow = f"0px 8px 25px rgba(0, 0, 0, 0.2), 0px 0px 20px {personality_color}60"
-        
+        # 设置基本样式（移除不支持的属性）
         style = f"""
         PersonalityCard {{
             background-color: {bg_color};
             border: {border_width} solid {border_color};
             border-radius: 16px;
             margin: 3px;
-            box-shadow: {shadow};
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }}
         PersonalityCard:hover {{
             border-color: {personality_color};
-            box-shadow: {hover_shadow};
-            transform: translateY(-3px);
         }}
         """
         
         self.setStyleSheet(style)
+        
+        # 使用 QGraphicsDropShadowEffect 创建阴影
+        if selected:
+            self.create_shadow_effect(blur_radius=15, offset_y=4)
+        else:
+            self.create_shadow_effect(blur_radius=8, offset_y=2)
     
     def set_theme(self, is_dark_theme: bool):
         """设置主题"""
         self.is_dark_theme = is_dark_theme
         self.set_style()
+    
+    def enterEvent(self, event):
+        """鼠标进入事件"""
+        if not self.is_selected:
+            # 悬浮时增强阴影效果
+            self.create_shadow_effect(blur_radius=12, offset_y=3)
+        super().enterEvent(event)
+    
+    def leaveEvent(self, event):
+        """鼠标离开事件"""
+        if not self.is_selected:
+            # 恢复正常阴影
+            self.create_shadow_effect(blur_radius=8, offset_y=2)
+        super().leaveEvent(event)
     
     def mousePressEvent(self, event):
         """鼠标点击事件"""
@@ -313,12 +338,12 @@ class PersonalityWidget(QWidget):
             /* 滚动条样式 */
             QScrollBar:vertical {
                 background-color: #2b2b2b;
-                width: 12px;
+                width: 4px;
                 border: none;
             }
             QScrollBar::handle:vertical {
                 background-color: #555555;
-                border-radius: 6px;
+                border-radius: 2px;
                 min-height: 20px;
             }
             QScrollBar::handle:vertical:hover {
