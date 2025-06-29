@@ -58,7 +58,7 @@ Sentimemory/
 ### 安装步骤
 1. 克隆项目到本地
    ```bash
-   git clone https://github.com/LoxyL/Sentimemory.git
+   git clone [<repository-url>](https://github.com/LoxyL/Sentimemory.git)
    cd Sentimemory
    ```
 
