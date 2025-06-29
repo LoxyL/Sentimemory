@@ -1,0 +1,172 @@
+2025-06-29 16:02:49 | INFO     | sentimemory.ai | _log_with_data:93 | ChatEngine初始化开始
+2025-06-29 16:02:49 | INFO     | sentimemory.personality | _log_with_data:93 | PersonalityManager初始化开始
+2025-06-29 16:02:49 | DEBUG    | sentimemory.personality | _log_with_data:93 | 人格配置文件路径
+额外数据: {
+  "config_path": "C:\\Users\\17303\\Documents\\GitHub\\Sentimemory\\src\\ai\\..\\..\\config\\personalities.json"
+}
+2025-06-29 16:02:49 | DEBUG    | sentimemory.personality | _log_with_data:93 | 开始加载人格配置
+2025-06-29 16:02:49 | DEBUG    | sentimemory.personality | _log_with_data:93 | 配置加载: 人格配置
+额外数据: {
+  "config_data": {
+    "config_path": "C:\\Users\\17303\\Documents\\GitHub\\Sentimemory\\src\\ai\\..\\..\\config\\personalities.json",
+    "personalities_count": 5,
+    "default_personality": "friendly"
+  },
+  "success": true
+}
+2025-06-29 16:02:49 | DEBUG    | sentimemory.personality | _log_with_data:93 | 设置默认人格
+额外数据: {
+  "default_personality": "friendly"
+}
+2025-06-29 16:02:49 | DEBUG    | sentimemory.personality | _log_with_data:93 | 尝试设置人格
+额外数据: {
+  "from_personality": null,
+  "to_personality": "friendly"
+}
+2025-06-29 16:02:49 | INFO     | sentimemory.personality | _log_with_data:93 | 人格设置成功
+额外数据: {
+  "personality_id": "friendly",
+  "personality_name": "友善型",
+  "personality_traits": [
+    "温和",
+    "善解人意",
+    "积极正面",
+    "善于倾听"
+  ],
+  "response_style": "warm"
+}
+2025-06-29 16:02:49 | INFO     | sentimemory.personality | _log_with_data:93 | PersonalityManager初始化完成
+额外数据: {
+  "total_personalities": 5,
+  "current_personality": "friendly"
+}
+2025-06-29 16:02:49 | INFO     | sentimemory.memory | _log_with_data:93 | MemoryManager初始化开始
+2025-06-29 16:02:49 | DEBUG    | sentimemory.memory | _log_with_data:93 | 记忆数据目录
+额外数据: {
+  "data_dir": "C:\\Users\\17303\\Documents\\GitHub\\Sentimemory\\src\\ai\\..\\..\\data\\memories"
+}
+2025-06-29 16:02:49 | DEBUG    | sentimemory.memory | _log_with_data:93 | 记忆数据库路径
+额外数据: {
+  "db_path": "C:\\Users\\17303\\Documents\\GitHub\\Sentimemory\\src\\ai\\..\\..\\data\\memories\\memories.db"
+}
+2025-06-29 16:02:49 | DEBUG    | sentimemory.memory | _log_with_data:93 | 开始初始化记忆数据库
+2025-06-29 16:02:49 | INFO     | sentimemory.memory | _log_with_data:93 | 记忆数据库初始化成功
+2025-06-29 16:02:49 | INFO     | sentimemory.memory | _log_with_data:93 | MemoryManager初始化完成
+2025-06-29 16:02:49 | DEBUG    | sentimemory.ai | _log_with_data:93 | AppSettings已加载
+额外数据: {
+  "settings_type": "新创建实例"
+}
+2025-06-29 16:02:49 | DEBUG    | sentimemory.ai | _log_with_data:93 | 开始设置OpenAI客户端
+2025-06-29 16:02:50 | DEBUG    | sentimemory.ai | _log_with_data:93 | 配置加载: OpenAI配置
+额外数据: {
+  "config_data": {
+    "api_key_length": 0,
+    "api_key_masked": "未设置",
+    "base_url": "https://api.openai-hk.com/v1",
+    "model": "gpt-4o-mini",
+    "timeout": 30
+  },
+  "success": true
+}
+2025-06-29 16:02:50 | INFO     | sentimemory.ai | _log_with_data:93 | OpenAI客户端设置成功
+2025-06-29 16:02:50 | INFO     | sentimemory.ai | _log_with_data:93 | ChatEngine初始化完成
+额外数据: {
+  "max_chat_history": 30,
+  "memory_extract_count": 10
+}
+2025-06-29 16:02:50 | DEBUG    | sentimemory.personality | _log_with_data:93 | 获取当前人格ID
+额外数据: {
+  "personality_id": "friendly"
+}
+2025-06-29 16:02:50 | DEBUG    | sentimemory.personality | _log_with_data:93 | 获取当前人格信息
+额外数据: {
+  "personality_id": "friendly",
+  "has_info": true
+}
+2025-06-29 16:02:50 | DEBUG    | sentimemory.personality | _log_with_data:93 | 获取当前人格ID
+额外数据: {
+  "personality_id": "friendly"
+}
+2025-06-29 16:02:50 | DEBUG    | sentimemory.memory | _log_with_data:93 | 开始获取记忆列表
+额外数据: {
+  "personality_id": "friendly",
+  "limit": 50
+}
+2025-06-29 16:02:50 | INFO     | sentimemory.memory | _log_with_data:93 | 记忆列表获取成功
+额外数据: {
+  "personality_id": "friendly",
+  "returned_count": 0,
+  "requested_limit": 50
+}
+2025-06-29 16:02:50 | DEBUG    | sentimemory.personality | _log_with_data:93 | 获取当前人格ID
+额外数据: {
+  "personality_id": "friendly"
+}
+2025-06-29 16:02:50 | DEBUG    | sentimemory.memory | _log_with_data:93 | 开始获取记忆摘要
+额外数据: {
+  "personality_id": "friendly"
+}
+2025-06-29 16:02:50 | INFO     | sentimemory.memory | _log_with_data:93 | 记忆摘要获取成功
+额外数据: {
+  "personality_id": "friendly",
+  "total_count": 0,
+  "categories": [],
+  "recent_count": 0
+}
+2025-06-29 16:02:50 | DEBUG    | sentimemory.ai | _log_with_data:93 | 记忆摘要获取完成
+额外数据: {
+  "personality_id": "friendly",
+  "summary": {
+    "total_count": 0,
+    "category_stats": {},
+    "recent_memories": []
+  }
+}
+2025-06-29 16:02:50 | DEBUG    | sentimemory.personality | _log_with_data:93 | 获取当前人格信息
+额外数据: {
+  "personality_id": "friendly",
+  "has_info": true
+}
+2025-06-29 16:02:50 | DEBUG    | sentimemory.personality | _log_with_data:93 | 获取当前人格信息
+额外数据: {
+  "personality_id": "friendly",
+  "has_info": true
+}
+2025-06-29 16:02:50 | DEBUG    | sentimemory.personality | _log_with_data:93 | 获取当前人格ID
+额外数据: {
+  "personality_id": "friendly"
+}
+2025-06-29 16:02:50 | DEBUG    | sentimemory.memory | _log_with_data:93 | 开始获取记忆摘要
+额外数据: {
+  "personality_id": "friendly"
+}
+2025-06-29 16:02:50 | INFO     | sentimemory.memory | _log_with_data:93 | 记忆摘要获取成功
+额外数据: {
+  "personality_id": "friendly",
+  "total_count": 0,
+  "categories": [],
+  "recent_count": 0
+}
+2025-06-29 16:02:50 | DEBUG    | sentimemory.ai | _log_with_data:93 | 记忆摘要获取完成
+额外数据: {
+  "personality_id": "friendly",
+  "summary": {
+    "total_count": 0,
+    "category_stats": {},
+    "recent_memories": []
+  }
+}
+2025-06-29 16:02:55 | INFO     | sentimemory.ai | _log_with_data:93 | 开始清空聊天历史
+额外数据: {
+  "current_count": 0
+}
+2025-06-29 16:02:55 | INFO     | sentimemory.ai | _log_with_data:93 | 聊天历史已清空
+额外数据: {
+  "cleared_count": 0,
+  "extracted_memories": false
+}
+2025-06-29 16:02:55 | DEBUG    | sentimemory.personality | _log_with_data:93 | 获取当前人格信息
+额外数据: {
+  "personality_id": "friendly",
+  "has_info": true
+}

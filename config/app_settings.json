@@ -1,0 +1,26 @@
+{
+    "window": {
+        "width": 1000,
+        "height": 700,
+        "min_width": 800,
+        "min_height": 600
+    },
+    "ai": {
+        "model": "deepseek-chat",
+        "base_url": "https://api.deepseek.com",
+        "api_key": "",
+        "default_personality": "friendly",
+        "max_memory_items": 100,
+        "response_timeout": 30
+    },
+    "ui": {
+        "theme": "dark",
+        "font_size": 12,
+        "chat_bubble_style": "modern"
+    },
+    "data": {
+        "auto_save": true,
+        "backup_enabled": true,
+        "max_chat_history": 1000
+    }
+}

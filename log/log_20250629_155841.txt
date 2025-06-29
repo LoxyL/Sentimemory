@@ -1,0 +1,451 @@
+2025-06-29 15:58:41 | INFO     | sentimemory.ai | _log_with_data:93 | ChatEngine初始化开始
+2025-06-29 15:58:41 | INFO     | sentimemory.personality | _log_with_data:93 | PersonalityManager初始化开始
+2025-06-29 15:58:41 | DEBUG    | sentimemory.personality | _log_with_data:93 | 人格配置文件路径
+额外数据: {
+  "config_path": "C:\\Users\\17303\\Documents\\GitHub\\Sentimemory\\src\\ai\\..\\..\\config\\personalities.json"
+}
+2025-06-29 15:58:41 | DEBUG    | sentimemory.personality | _log_with_data:93 | 开始加载人格配置
+2025-06-29 15:58:41 | DEBUG    | sentimemory.personality | _log_with_data:93 | 配置加载: 人格配置
+额外数据: {
+  "config_data": {
+    "config_path": "C:\\Users\\17303\\Documents\\GitHub\\Sentimemory\\src\\ai\\..\\..\\config\\personalities.json",
+    "personalities_count": 5,
+    "default_personality": "friendly"
+  },
+  "success": true
+}
+2025-06-29 15:58:41 | DEBUG    | sentimemory.personality | _log_with_data:93 | 设置默认人格
+额外数据: {
+  "default_personality": "friendly"
+}
+2025-06-29 15:58:41 | DEBUG    | sentimemory.personality | _log_with_data:93 | 尝试设置人格
+额外数据: {
+  "from_personality": null,
+  "to_personality": "friendly"
+}
+2025-06-29 15:58:41 | INFO     | sentimemory.personality | _log_with_data:93 | 人格设置成功
+额外数据: {
+  "personality_id": "friendly",
+  "personality_name": "友善型",
+  "personality_traits": [
+    "温和",
+    "善解人意",
+    "积极正面",
+    "善于倾听"
+  ],
+  "response_style": "warm"
+}
+2025-06-29 15:58:41 | INFO     | sentimemory.personality | _log_with_data:93 | PersonalityManager初始化完成
+额外数据: {
+  "total_personalities": 5,
+  "current_personality": "friendly"
+}
+2025-06-29 15:58:41 | INFO     | sentimemory.memory | _log_with_data:93 | MemoryManager初始化开始
+2025-06-29 15:58:41 | DEBUG    | sentimemory.memory | _log_with_data:93 | 记忆数据目录
+额外数据: {
+  "data_dir": "C:\\Users\\17303\\Documents\\GitHub\\Sentimemory\\src\\ai\\..\\..\\data\\memories"
+}
+2025-06-29 15:58:41 | DEBUG    | sentimemory.memory | _log_with_data:93 | 记忆数据库路径
+额外数据: {
+  "db_path": "C:\\Users\\17303\\Documents\\GitHub\\Sentimemory\\src\\ai\\..\\..\\data\\memories\\memories.db"
+}
+2025-06-29 15:58:41 | DEBUG    | sentimemory.memory | _log_with_data:93 | 开始初始化记忆数据库
+2025-06-29 15:58:41 | INFO     | sentimemory.memory | _log_with_data:93 | 创建新的记忆数据库表
+2025-06-29 15:58:41 | INFO     | sentimemory.memory | _log_with_data:93 | 记忆数据库初始化成功
+2025-06-29 15:58:41 | INFO     | sentimemory.memory | _log_with_data:93 | MemoryManager初始化完成
+2025-06-29 15:58:41 | DEBUG    | sentimemory.ai | _log_with_data:93 | AppSettings已加载
+额外数据: {
+  "settings_type": "新创建实例"
+}
+2025-06-29 15:58:41 | DEBUG    | sentimemory.ai | _log_with_data:93 | 开始设置OpenAI客户端
+2025-06-29 15:58:42 | DEBUG    | sentimemory.ai | _log_with_data:93 | 配置加载: OpenAI配置
+额外数据: {
+  "config_data": {
+    "api_key_length": 0,
+    "api_key_masked": "未设置",
+    "base_url": "https://api.openai.com/v1",
+    "model": "gpt-4o-mini",
+    "timeout": 30
+  },
+  "success": true
+}
+2025-06-29 15:58:42 | INFO     | sentimemory.ai | _log_with_data:93 | OpenAI客户端设置成功
+2025-06-29 15:58:42 | INFO     | sentimemory.ai | _log_with_data:93 | ChatEngine初始化完成
+额外数据: {
+  "max_chat_history": 30,
+  "memory_extract_count": 10
+}
+2025-06-29 15:58:42 | DEBUG    | sentimemory.personality | _log_with_data:93 | 获取当前人格ID
+额外数据: {
+  "personality_id": "friendly"
+}
+2025-06-29 15:58:42 | DEBUG    | sentimemory.personality | _log_with_data:93 | 获取当前人格信息
+额外数据: {
+  "personality_id": "friendly",
+  "has_info": true
+}
+2025-06-29 15:58:42 | DEBUG    | sentimemory.personality | _log_with_data:93 | 获取当前人格ID
+额外数据: {
+  "personality_id": "friendly"
+}
+2025-06-29 15:58:42 | DEBUG    | sentimemory.memory | _log_with_data:93 | 开始获取记忆列表
+额外数据: {
+  "personality_id": "friendly",
+  "limit": 50
+}
+2025-06-29 15:58:43 | INFO     | sentimemory.memory | _log_with_data:93 | 记忆列表获取成功
+额外数据: {
+  "personality_id": "friendly",
+  "returned_count": 0,
+  "requested_limit": 50
+}
+2025-06-29 15:58:43 | DEBUG    | sentimemory.personality | _log_with_data:93 | 获取当前人格ID
+额外数据: {
+  "personality_id": "friendly"
+}
+2025-06-29 15:58:43 | DEBUG    | sentimemory.memory | _log_with_data:93 | 开始获取记忆摘要
+额外数据: {
+  "personality_id": "friendly"
+}
+2025-06-29 15:58:43 | INFO     | sentimemory.memory | _log_with_data:93 | 记忆摘要获取成功
+额外数据: {
+  "personality_id": "friendly",
+  "total_count": 0,
+  "categories": [],
+  "recent_count": 0
+}
+2025-06-29 15:58:43 | DEBUG    | sentimemory.ai | _log_with_data:93 | 记忆摘要获取完成
+额外数据: {
+  "personality_id": "friendly",
+  "summary": {
+    "total_count": 0,
+    "category_stats": {},
+    "recent_memories": []
+  }
+}
+2025-06-29 15:58:43 | DEBUG    | sentimemory.personality | _log_with_data:93 | 获取当前人格信息
+额外数据: {
+  "personality_id": "friendly",
+  "has_info": true
+}
+2025-06-29 15:58:43 | DEBUG    | sentimemory.personality | _log_with_data:93 | 获取当前人格信息
+额外数据: {
+  "personality_id": "friendly",
+  "has_info": true
+}
+2025-06-29 15:58:43 | DEBUG    | sentimemory.personality | _log_with_data:93 | 获取当前人格ID
+额外数据: {
+  "personality_id": "friendly"
+}
+2025-06-29 15:58:43 | DEBUG    | sentimemory.memory | _log_with_data:93 | 开始获取记忆摘要
+额外数据: {
+  "personality_id": "friendly"
+}
+2025-06-29 15:58:43 | INFO     | sentimemory.memory | _log_with_data:93 | 记忆摘要获取成功
+额外数据: {
+  "personality_id": "friendly",
+  "total_count": 0,
+  "categories": [],
+  "recent_count": 0
+}
+2025-06-29 15:58:43 | DEBUG    | sentimemory.ai | _log_with_data:93 | 记忆摘要获取完成
+额外数据: {
+  "personality_id": "friendly",
+  "summary": {
+    "total_count": 0,
+    "category_stats": {},
+    "recent_memories": []
+  }
+}
+2025-06-29 15:58:54 | INFO     | sentimemory.ai | _log_with_data:93 | 开始处理用户消息
+额外数据: {
+  "content_length": 2,
+  "content_preview": "你好",
+  "chat_history_length": 0
+}
+2025-06-29 15:58:54 | DEBUG    | sentimemory.ai | _log_with_data:93 | 检查对话历史长度
+额外数据: {
+  "current_count": 0,
+  "max_limit": 30
+}
+2025-06-29 15:58:54 | DEBUG    | sentimemory.ai | _log_with_data:93 | 用户消息已添加到聊天历史
+2025-06-29 15:58:54 | DEBUG    | sentimemory.ai | _log_with_data:93 | 开始生成AI回复
+2025-06-29 15:58:54 | DEBUG    | sentimemory.personality | _log_with_data:93 | 获取当前人格信息
+额外数据: {
+  "personality_id": "friendly",
+  "has_info": true
+}
+2025-06-29 15:58:54 | DEBUG    | sentimemory.personality | _log_with_data:93 | 获取当前人格ID
+额外数据: {
+  "personality_id": "friendly"
+}
+2025-06-29 15:58:54 | DEBUG    | sentimemory.memory | _log_with_data:93 | 开始获取记忆列表
+额外数据: {
+  "personality_id": "friendly",
+  "limit": 10
+}
+2025-06-29 15:58:54 | INFO     | sentimemory.memory | _log_with_data:93 | 记忆列表获取成功
+额外数据: {
+  "personality_id": "friendly",
+  "returned_count": 0,
+  "requested_limit": 10
+}
+2025-06-29 15:58:54 | DEBUG    | sentimemory.ai | _log_with_data:93 | 获取相关记忆
+额外数据: {
+  "personality_id": "friendly",
+  "memory_count": 0,
+  "memories": []
+}
+2025-06-29 15:58:54 | DEBUG    | sentimemory.ai | _log_with_data:93 | 构建AI上下文
+额外数据: {
+  "personality_name": "友善型",
+  "memory_count": 0
+}
+2025-06-29 15:58:54 | DEBUG    | sentimemory.ai | _log_with_data:93 | AI上下文构建完成
+额外数据: {
+  "context_length": 49,
+  "context_preview": "人格名称: 友善型\n\n人格特征: 温和, 善解人意, 积极正面, 善于倾听\n\n回复风格: warm"
+}
+2025-06-29 15:58:54 | DEBUG    | sentimemory.ai | _log_with_data:93 | 对话历史构建完成
+额外数据: {
+  "total_history_count": 1,
+  "used_history_count": 1
+}
+2025-06-29 15:58:54 | DEBUG    | sentimemory.ai | _log_with_data:93 | AI请求开始
+额外数据: {
+  "model": "gpt-4o-mini",
+  "messages_count": 3,
+  "messages": [
+    {
+      "role": "system",
+      "content": "你是一个AI助手，具有以下人格特征：\n人格名称: 友善型\n\n人格特征: 温和, 善解人意, 积极正面, 善于倾听\n\n回复风格: warm\n\n请根据这些信息和对话历史，以符合人格特征的方式回复用户。保持对话的连贯性和个性化。\n\n注意：\n1. 不要使用markdown格式\n2. 不要使用代码块\n3. 不要使用特殊字符\n4. 语气自然，不要像个AI\n5. 对话内容尽量保持在100字以内\n6. 对话内容尽量是一段话\n"
+    },
+    {
+      "role": "user",
+      "content": "你好"
+    },
+    {
+      "role": "user",
+      "content": "你好"
+    }
+  ],
+  "parameters": {
+    "timeout": 30,
+    "temperature": 0.7,
+    "max_tokens": 1000,
+    "purpose": "对话回复"
+  }
+}
+2025-06-29 15:59:03 | ERROR    | sentimemory.ai | _log_with_data:93 | 错误发生在 AI回复生成
+额外数据: {
+  "error_type": "APIConnectionError",
+  "error_message": "Connection error.",
+  "context": "AI回复生成",
+  "personality_id": "friendly",
+  "input_preview": "你好",
+  "model": "gpt-4o-mini"
+}
+Traceback (most recent call last):
+  File "C:\Users\17303\conda\Lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\17303\conda\Lib\site-packages\httpx\_transports\default.py", line 250, in handle_request
+    resp = self._pool.handle_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\17303\conda\Lib\site-packages\httpcore\_sync\connection_pool.py", line 256, in handle_request
+    raise exc from None
+  File "C:\Users\17303\conda\Lib\site-packages\httpcore\_sync\connection_pool.py", line 236, in handle_request
+    response = connection.handle_request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\17303\conda\Lib\site-packages\httpcore\_sync\http_proxy.py", line 343, in handle_request
+    return self._connection.handle_request(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\17303\conda\Lib\site-packages\httpcore\_sync\http11.py", line 136, in handle_request
+    raise exc
+  File "C:\Users\17303\conda\Lib\site-packages\httpcore\_sync\http11.py", line 86, in handle_request
+    self._send_request_headers(**kwargs)
+  File "C:\Users\17303\conda\Lib\site-packages\httpcore\_sync\http11.py", line 144, in _send_request_headers
+    with map_exceptions({h11.LocalProtocolError: LocalProtocolError}):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\17303\conda\Lib\contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+  File "C:\Users\17303\conda\Lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.LocalProtocolError: Illegal header value b'Bearer '
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\17303\conda\Lib\site-packages\openai\_base_client.py", line 969, in request
+    response = self._client.send(
+               ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\17303\conda\Lib\site-packages\httpx\_client.py", line 914, in send
+    response = self._send_handling_auth(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\17303\conda\Lib\site-packages\httpx\_client.py", line 942, in _send_handling_auth
+    response = self._send_handling_redirects(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\17303\conda\Lib\site-packages\httpx\_client.py", line 979, in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\17303\conda\Lib\site-packages\httpx\_client.py", line 1014, in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\17303\conda\Lib\site-packages\httpx\_transports\default.py", line 249, in handle_request
+    with map_httpcore_exceptions():
+         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\17303\conda\Lib\contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+  File "C:\Users\17303\conda\Lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.LocalProtocolError: Illegal header value b'Bearer '
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\17303\Documents\GitHub\Sentimemory\src\ui\..\ai\chat_engine.py", line 536, in _generate_response
+    response = self.client.chat.completions.create(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\17303\conda\Lib\site-packages\openai\_utils\_utils.py", line 287, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\17303\conda\Lib\site-packages\openai\resources\chat\completions\completions.py", line 925, in create
+    return self._post(
+           ^^^^^^^^^^^
+  File "C:\Users\17303\conda\Lib\site-packages\openai\_base_client.py", line 1239, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\17303\conda\Lib\site-packages\openai\_base_client.py", line 1001, in request
+    raise APIConnectionError(request=request) from err
+openai.APIConnectionError: Connection error.
+2025-06-29 15:59:03 | INFO     | sentimemory.ai | _log_with_data:93 | 消息处理完成
+额外数据: {
+  "processing_time_seconds": 9.018026113510132,
+  "response_length": 46,
+  "response_preview": "抱歉，我现在遇到了一些技术问题，无法正常回复。错误信息: Connection error.",
+  "final_chat_history_length": 2
+}
+2025-06-29 15:59:08 | INFO     | sentimemory.ai | _log_with_data:93 | 开始清空聊天历史
+额外数据: {
+  "current_count": 2
+}
+2025-06-29 15:59:08 | INFO     | sentimemory.ai | _log_with_data:93 | 在清空前提取所有对话记忆
+额外数据: {
+  "total_conversations": 2
+}
+2025-06-29 15:59:08 | DEBUG    | sentimemory.personality | _log_with_data:93 | 获取当前人格ID
+额外数据: {
+  "personality_id": "friendly"
+}
+2025-06-29 15:59:08 | DEBUG    | sentimemory.ai | _log_with_data:93 | 开始从对话片段提取记忆
+额外数据: {
+  "conversation_count": 2,
+  "personality_id": "friendly"
+}
+2025-06-29 15:59:08 | DEBUG    | sentimemory.ai | _log_with_data:93 | AI请求开始
+额外数据: {
+  "model": "gpt-4o-mini",
+  "messages_count": 2,
+  "messages": [
+    {
+      "role": "system",
+      "content": "你是一个记忆提取专家。请从这段对话历史中提取重要信息，包括：\n1. 用户表达的重要事件和经历\n2. 用户的情感状态和变化\n3. 用户的个人偏好和兴趣\n4. 重要的日期、时间或人物关系\n5. 用户的目标、计划或担忧\n6. 用户的个人信息（姓名、年龄、职业、居住地等）\n7. 用户的学习和工作情况\n8. 用户的生活习惯和爱好\n\n请仔细分析整段对话，提取所有有价值的信息。每个记忆项应该是独立且有意义的。\n\n请以JSON格式返回，每个记忆项包含：\n- content: 记忆内容描述（要完整且具体）\n- category: 分类（personal/event/emotion/preference/date/relationship/goal/habit/work/study）\n- importance: 重要性（1-5，5最重要）\n- tags: 相关标签列表\n\n尽可能多地提取有价值的信息，不要遗漏重要细节。\n\n示例格式：\n[\n    {\n        \"content\": \"用户名叫张三，今年25岁\",\n        \"category\": \"personal\",\n        \"importance\": 4,\n        \"tags\": [\"姓名\", \"年龄\", \"基本信息\"]\n    },\n    {\n        \"content\": \"用户正在学习Python编程，目标是成为AI工程师\",\n        \"category\": \"goal\",\n        \"importance\": 5,\n        \"tags\": [\"学习\", \"编程\", \"Python\", \"AI工程师\", \"职业目标\"]\n    },\n    {\n        \"content\": \"用户每天喝3-4杯咖啡，咖啡是日常生活的重要部分\",\n        \"category\": \"habit\",\n        \"importance\": 3,\n        \"tags\": [\"咖啡\", \"饮食习惯\", \"日常生活\"]\n    }\n]"
+    },
+    {
+      "role": "user",
+      "content": "请从以下对话历史中提取关键记忆：\n\n用户: 你好\nAI: 抱歉，我现在遇到了一些技术问题，无法正常回复。错误信息: Connection error."
+    }
+  ],
+  "parameters": {
+    "timeout": 30,
+    "purpose": "对话记忆提取"
+  }
+}
+2025-06-29 15:59:16 | ERROR    | sentimemory.ai | _log_with_data:93 | 错误发生在 对话记忆提取
+额外数据: {
+  "error_type": "APIConnectionError",
+  "error_message": "Connection error.",
+  "context": "对话记忆提取",
+  "personality_id": "friendly",
+  "conversation_count": 2
+}
+Traceback (most recent call last):
+  File "C:\Users\17303\conda\Lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\17303\conda\Lib\site-packages\httpx\_transports\default.py", line 250, in handle_request
+    resp = self._pool.handle_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\17303\conda\Lib\site-packages\httpcore\_sync\connection_pool.py", line 256, in handle_request
+    raise exc from None
+  File "C:\Users\17303\conda\Lib\site-packages\httpcore\_sync\connection_pool.py", line 236, in handle_request
+    response = connection.handle_request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\17303\conda\Lib\site-packages\httpcore\_sync\http_proxy.py", line 316, in handle_request
+    stream = stream.start_tls(**kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\17303\conda\Lib\site-packages\httpcore\_sync\http11.py", line 376, in start_tls
+    return self._stream.start_tls(ssl_context, server_hostname, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\17303\conda\Lib\site-packages\httpcore\_backends\sync.py", line 154, in start_tls
+    with map_exceptions(exc_map):
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\17303\conda\Lib\contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+  File "C:\Users\17303\conda\Lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectError: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\17303\conda\Lib\site-packages\openai\_base_client.py", line 969, in request
+    response = self._client.send(
+               ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\17303\conda\Lib\site-packages\httpx\_client.py", line 914, in send
+    response = self._send_handling_auth(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\17303\conda\Lib\site-packages\httpx\_client.py", line 942, in _send_handling_auth
+    response = self._send_handling_redirects(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\17303\conda\Lib\site-packages\httpx\_client.py", line 979, in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\17303\conda\Lib\site-packages\httpx\_client.py", line 1014, in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\17303\conda\Lib\site-packages\httpx\_transports\default.py", line 249, in handle_request
+    with map_httpcore_exceptions():
+         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\17303\conda\Lib\contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+  File "C:\Users\17303\conda\Lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectError: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\17303\Documents\GitHub\Sentimemory\src\ui\..\ai\chat_engine.py", line 248, in _extract_memories_from_conversations
+    response = self.client.chat.completions.create(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\17303\conda\Lib\site-packages\openai\_utils\_utils.py", line 287, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\17303\conda\Lib\site-packages\openai\resources\chat\completions\completions.py", line 925, in create
+    return self._post(
+           ^^^^^^^^^^^
+  File "C:\Users\17303\conda\Lib\site-packages\openai\_base_client.py", line 1239, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\17303\conda\Lib\site-packages\openai\_base_client.py", line 1001, in request
+    raise APIConnectionError(request=request) from err
+openai.APIConnectionError: Connection error.
+2025-06-29 15:59:16 | INFO     | sentimemory.ai | _log_with_data:93 | 聊天历史已清空
+额外数据: {
+  "cleared_count": 2,
+  "extracted_memories": true
+}
+2025-06-29 15:59:16 | DEBUG    | sentimemory.personality | _log_with_data:93 | 获取当前人格信息
+额外数据: {
+  "personality_id": "friendly",
+  "has_info": true
+}
